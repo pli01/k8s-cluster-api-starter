@@ -1,0 +1,16 @@
+export EXP_MACHINE_POOL=true
+export CLUSTER_TOPOLOGY=true
+
+# The list of nameservers for OpenStack Subnet being created.
+# Set this value when you need create a new network/subnet while the access through DNS is required.
+export OPENSTACK_DNS_NAMESERVERS="192.168.2.10"
+# FailureDomain is the failure domain the machine will be created in.
+export OPENSTACK_FAILURE_DOMAIN=AZ1
+# The flavor reference for the flavor for your server instance.
+export OPENSTACK_CONTROL_PLANE_MACHINE_FLAVOR=CO1.2
+# The flavor reference for the flavor for your server instance.
+export OPENSTACK_NODE_MACHINE_FLAVOR=CO1.2
+# The name of the image to use for your server instance. If the RootVolume is specified, this will be ignored and use rootVolume directly.
+export OPENSTACK_IMAGE_NAME=ubuntu-2204-kube-v1.26.7
+# The SSH key pair name
+export OPENSTACK_SSH_KEY_NAME=_TO_BE_DEFINED_KEYNAME_

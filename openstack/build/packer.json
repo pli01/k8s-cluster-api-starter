@@ -1,0 +1,15 @@
+{
+  "source_image": "5eff1544-24b2-48a1-862f-e11c8368ec85",    # ubuntu2204
+  "networks": "a1f9f345-b1f8-45a5-b4f2-228c471d0071",        # network accessible from builder instance
+  "security_groups": "df22e412-0f85-4cdd-a54b-39a07ef8b314", # allow ssh
+  "flavor": "CO1.2",
+  "image_visibility": "private",
+  "image_disk_format": "qcow2",
+  "volume_type": "__DEFAULT__",
+  "use_blockstorage_volume": "true",
+  "volume_size": "30",
+  "ssh_username": "cloudadm",
+  "http_proxy": "http://192.168.2.10:8888",
+  "https_proxy": "http://192.168.2.10:8888",
+  "ansible_user_vars": "http_proxy=http://192.168.2.10:8888 https_proxy=http://192.168.2.10:8888 no_proxy=localhost,192.168.0.0/16"
+}

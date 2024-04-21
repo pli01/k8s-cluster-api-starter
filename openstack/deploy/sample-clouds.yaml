@@ -1,0 +1,12 @@
+clouds:
+  openstack:
+    auth:
+      auth_url: https://_TO_BE_DEFINED_cloud.openstack:5000
+      username: "_TO_BE_DEFINED_OS_USERNAME_"
+      project_id: _TO_BE_DEFINED_PROJECT_ID_
+      project_name: "_TO_BE_DEFINED_PROJECT_NAME_"
+      user_domain_name: "Default"
+    region_name: "RegionOne"
+    interface: "public"
+    identity_api_version: 3
+    cacert: ./ca.crt
