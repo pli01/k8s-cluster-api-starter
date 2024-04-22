@@ -37,6 +37,9 @@ sudo mv yq_linux_amd64 /usr/local/bin/yq
 
 # download env.rc script
 curl -LO https://raw.githubusercontent.com/kubernetes-sigs/cluster-api-provider-openstack/master/templates/env.rc
+
+# download create_cloud_conf
+curl -LO https://raw.githubusercontent.com/kubernetes-sigs/cluster-api-provider-openstack/main/templates/create_cloud_conf.sh
 ```
 
 - get ca.crt used for your openstack API access (https)
@@ -160,7 +163,15 @@ spec:
 
 ```
 
-## Tips to add cloud-init config at boot tome
+- configure external cloud-provider-openstack
+
+```
+./create_cloud_conf.sh clouds.yaml openstack > cloud.conf
+
+kubectl create secret -n kube-system generic cloud-config --from-file=./cloud.conf
+```
+
+## Tips to add cloud-init config at boot time
 - Customize containerd config to add http proxy
 
 ```

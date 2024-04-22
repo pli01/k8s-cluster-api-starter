@@ -29,18 +29,23 @@ umask 0022
 git clone https://github.com/kubernetes-sigs/image-builder.git
 ```
 
-# build/run shell
+# run a shell
 ```
 # run.sh
 run.sh : contains the docker command line and argument to run image builder with all files included
 in the container, run, the following command
 make build-openstack-ubuntu-2204
-
+```
+# build cloud images
+```
 # build.sh
 build.sh: start the build of kubernetes image based on ubuntu OS
+  - you can specify kubernetes version to install (127,128,129,130) according to extra_args_kube_${kube_version}.json
+  - you can add extra docker args
 
-# in this example, we add an explicit hosts entry in container docker to openstack api
-bash build.sh "--add-host identity.openstack.local:10.1.1.1"
+# in this example, we build kubernetes 1.27 version and add an explicit hosts entry in container docker to openstack api
+
+build.sh  127 "--add-host identity.openstack.local:10.1.1.1
 
 .... Wait 10/15mn and list the fresh openstack image ...
 
