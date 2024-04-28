@@ -32,6 +32,7 @@ sudo mv clusterctl /usr/local/bin/clusterctl
 # install yq
 curl -LO https://github.com/mikefarah/yq/releases/download/v4.43.1/yq_linux_amd64.tar.gz
 tar -zxvf yq_linux_amd64.tar.gz  ./yq_linux_amd64
+rm -rf yq_linux_amd64.tar.gz
 chmod +x yq_linux_amd64
 sudo mv yq_linux_amd64 /usr/local/bin/yq
 
@@ -43,11 +44,13 @@ curl -LO https://raw.githubusercontent.com/kubernetes-sigs/cluster-api-provider-
 ```
 
 - get ca.crt used for your openstack API access (https)
-- create clouds.yaml (including cacert key)
 - source your openstack creds (OS_PASSWORD is needed)
+- create clouds.yaml (including cacert key)
+```
+cat sample-clouds.yaml |envsubst > clouds.yaml
+```
 - generate all openstack variables to configure cluster (ex: capi-openstack.rc)
-- generate other OPENSTACK_ variable, to build template, with env.rc script
-
+- generate other OPENSTACK_ variable, to build cluster-api from template, with env.rc script
 ```
 ( source env.rc clouds.yaml openstack ; env |grep OPE) >> capi-openstack.rc
 ```
@@ -64,7 +67,7 @@ kind create cluster --name mgmt
 clusterctl init --infrastructure openstack  --addon helm
 ```
 - wait pods ready
-- generate cluster template (without lb)
+- generate cluster config from template (without lb)
 
 ```
 clusterctl generate cluster capi-quickstart --flavor without-lb --kubernetes-version v1.26.7 --control-plane-machine-count=1 > capi-quickstart.yaml
