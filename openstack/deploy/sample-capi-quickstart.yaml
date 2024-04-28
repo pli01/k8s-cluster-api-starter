@@ -13,6 +13,14 @@ spec:
         - systemctl daemon-reload
         - systemctl restart containerd
       files:
+        - path: /etc/apt/apt.conf.d/99proxy
+          owner: "root:root"
+          permissions: "0644"
+          content: |
+            Acquire {
+              http::Proxy "http://192.168.2.10:8888";
+              https::Proxy "http://192.168.2.10:8888";
+              }
         - path: /etc/systemd/system/containerd.service.d/http-proxy.conf
           owner: "root:root"
           permissions: "0644"
@@ -89,6 +97,14 @@ spec:
       - systemctl daemon-reload
       - systemctl restart containerd
     files:
+      - path: /etc/apt/apt.conf.d/99proxy
+        owner: "root:root"
+        permissions: "0644"
+        content: |
+          Acquire {
+            http::Proxy "http://192.168.2.10:8888";
+            https::Proxy "http://192.168.2.10:8888";
+            }
       - path: /etc/systemd/system/containerd.service.d/http-proxy.conf
         owner: "root:root"
         permissions: "0644"
@@ -146,7 +162,8 @@ spec:
       name: router_services
   disableExternalNetwork: true
 #  externalNetwork:
-#    id: 129e7506-6bc0-4722-aec7-99b4d8430ec3
+#    filter:
+#      name: _REPLACE_FIP_NETWORK_
   identityRef:
     cloudName: openstack
     name: capi-quickstart-cloud-config
