@@ -10,10 +10,11 @@ The following steps must run on an instance with:
   - dns server: to resolve openstack API if needed (ex: unbound)
 
 
-In this example, we use
+In this example, we use predefined resources
  - private openstack cloud
- - internet acces through internal httpproxy
- - existing instances: bastion, httpproxy and dns resolver
+ - internet access through internal `http_proxy`
+ - openstack API access through `http_proxy`
+ - existing instances: bastion, `http_proxy` and dns resolver
  - existing router, network, subnet
  - cluster mgmt is installed on bastion instance
  - workload cluster will be deployed in existing subnet
@@ -21,6 +22,16 @@ In this example, we use
 # prepare mgmt instance
 
 ```
+# source `proxy` conf (if needed)
+```
+export HTTP_PROXY=http://proxy.internal:8888
+export HTTPS_PROXY=http://proxy.internal:8888
+export NO_PROXY=localhost,192.168.0.0/16
+export http_proxy=http://proxy.internal:8888
+export https_proxy=http://proxy.internal:8888
+export no_proxy=localhost,192.168.0.0/16
+```
+
 # install some tools (kind, kubectl...)
 curl -L https://raw.githubusercontent.com/numerique-gouv/dk8s/main/scripts/install-prereq.sh | bash
 
@@ -56,7 +67,7 @@ cat sample-clouds.yaml |envsubst > clouds.yaml
 ```
 
 # create mgmt cluster
-- configure docker (with dns configurer to resolve openstack api)
+- configure docker (with access to pull image , http_proxy)
 - kind create (with docker)
 ```
 kind create cluster --name mgmt
@@ -64,9 +75,15 @@ kind create cluster --name mgmt
 - wait pods ready
 - clusterctl init --infrastructure openstack
 ```
-clusterctl init --infrastructure openstack  --addon helm
+clusterctl init --infrastructure openstack --addon helm
 ```
 - wait pods ready
+- if needed, configure capo pod (cluster api openstack) to contact openstack API with `http_proxy` env
+```
+bash configure_capo.sh
+```
+
+# Create workload configuration
 - generate cluster config from template (without lb)
 
 ```
@@ -205,10 +222,15 @@ spec:
 
 # create workload cluster
 
-Create the workload cluster, from the previous template (capi-quickstart.yaml)
+Create the workload cluster, from the previous template (ex: capi-quickstart.yaml)
+
+To be ready, the workload cluster must have a CNI installed and the openstack controller manager must access the openstack API (with http_proxy if needed)
 
 ```
 kubectl apply -f capi-quickstart.yaml
+
+# configure CNI and openstack controller manager to use http_proxy
+bash configure_cluster.sh capi-quickstart
 
 # follow the deployment of the cluster
 kubectl get machine -A
