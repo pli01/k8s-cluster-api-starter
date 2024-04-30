@@ -9,7 +9,7 @@
   "image_disk_format": "qcow2",
   "volume_type": "__DEFAULT__",
   "use_blockstorage_volume": "true",
-  "volume_size": "30",
+  "volume_size": "10",
   "ssh_username": "cloudadm",
   "http_proxy": "http://192.168.2.10:8888",
   "https_proxy": "http://192.168.2.10:8888",
