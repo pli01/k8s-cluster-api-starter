@@ -1,0 +1,31 @@
+---
+apt_conf_config_file: /etc/apt/apt.conf.d/99apt-conf-ansible-managed
+apt_conf:
+  - comment: 'retry failed downloaded files the given number of times'
+    key: APT::Acquire::Retries
+    value: '"10";'
+  - key: APT::Get::Assume-Yes
+    value: '"true";'
+  - comment: 'Wait dpkg lock timeout'
+    key: DPkg::Lock::Timeout
+    value: '"60";'
+  - key: APT::Install-Recommends
+    value: '"false";'
+  - key: APT::Install-Suggests
+    value: '"false";'
+  - comment: 'Fix bad proxy and http headers settings'
+    key: Acquire::http::Pipeline-Depth
+    value: '"0";'
+  - key: Acquire::http::No-Cache
+    value: '"true";'
+  - key: Acquire::BrokenProxy
+    value: '"true";'
+
+unnecessary_services:
+  - apt-daily.timer
+  - apt-daily.service
+  - apt-daily-upgrade.timer
+  - apt-daily-upgrade.service
+  - unattended-upgrades
+unnecessary_packages:
+  - unattended-upgrades
