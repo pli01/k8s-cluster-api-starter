@@ -1,0 +1,11 @@
+#
+# custom tasks
+#
+---
+- name: Remove apt.conf.d/99proxy when http defined
+  ansible.builtin.file:
+    state: "{{ item.state }}"
+    path: "{{ item.path }}"
+  loop:
+    - { path: "/etc/apt/apt.conf.d/99proxy", state: "absent" }
+  when: http_proxy is defined or https_proxy is defined
