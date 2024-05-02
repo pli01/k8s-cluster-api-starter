@@ -13,6 +13,7 @@
   "ssh_username": "cloudadm",
   "http_proxy": "http://192.168.2.10:8888",
   "https_proxy": "http://192.168.2.10:8888",
-  "ansible_user_vars": "http_proxy=http://192.168.2.10:8888 https_proxy=http://192.168.2.10:8888 no_proxy=localhost,192.168.0.0/16",
-  "node_custom_roles_pre": "custom"
+  "ansible_user_vars": "http_proxy=http://192.168.2.10:8888 https_proxy=http://192.168.2.10:8888 no_proxy=localhost,192.168.0.0/16 ubuntu_repo={{ user `custom_ubuntu_repo`}}",
+  "node_custom_roles_pre": "custom",
+  "custom_ubuntu_repo": "https://ubuntu.mirrors.ovh.net"
 }

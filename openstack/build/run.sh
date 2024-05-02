@@ -21,6 +21,7 @@ docker_args=" $docker_args -v ./ansible/roles/custom:/home/imagebuilder/ansible/
 docker run -it --rm --net=host \
   $docker_args \
 	-v ./packer.json:/data/packer.json \
+	-v ./ansible/roles/setup/templates/etc/apt/sources.list.j2:/home/imagebuilder/ansible/roles/setup/templates/etc/apt/sources.list.j2 \
 	--env PACKER_VAR_FILES="/data/packer.json $EXTRA_PACKER_VAR_FILES" \
 	--env-file ./packer.openstack.rc \
   --entrypoint /bin/bash \
