@@ -258,4 +258,12 @@ kubectl --kubeconfig=capi-quickstart.kubeconfig get pod -A -o wide
 
 # Run the demo
 
-In sample-demo, run both script to deploy whoami app exposed with ingress-nginx
+Prereq:
+- Assume an External LB is provisionned outside cluster-api. LB can contact worker node (http,https)
+- external LB redirect trafic to port 80 or 443 on worker node with ingress-nginx
+
+To install ingress-nginx and whoami sample-demo, run both scripts
+```
+install_ingress-nginx.sh capi-quickstart
+install_whoami.sh capi-quickstart
+```

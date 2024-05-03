@@ -28,7 +28,7 @@ spec:
             [Service]
             Environment="HTTP_PROXY=http://192.168.2.10:8888"
             Environment="HTTPS_PROXY=http://192.168.2.10:8888"
-            Environment="NO_PROXY=.svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,10.96.0.0/12,192.168.0.0/16"
+            Environment="NO_PROXY=.svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,10.96.0.0/12,172.16.0.0/16,192.168.0.0/16"
       joinConfiguration:
         nodeRegistration:
           kubeletExtraArgs:
@@ -112,7 +112,7 @@ spec:
           [Service]
           Environment="HTTP_PROXY=http://192.168.2.10:8888"
           Environment="HTTPS_PROXY=http://192.168.2.10:8888"
-          Environment="NO_PROXY=.svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,10.96.0.0/12,192.168.0.0/16"
+          Environment="NO_PROXY=.svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,10.96.0.0/12,172.16.0.0/16,192.168.0.0/16"
     clusterConfiguration:
       apiServer:
         extraArgs:
@@ -148,6 +148,12 @@ metadata:
 spec:
   bastion:
     enabled: false
+    spec:
+      flavor: CO1.2
+      image:
+        filter:
+          name: ubuntu22.04
+      sshKeyName: _TO_BE_REPLACE_
   #apiServerFloatingIP: 100.10.10.10
   disableAPIServerFloatingIP: true
   apiServerFixedIP: 192.168.2.100
@@ -160,6 +166,8 @@ spec:
   router:
     filter:
       name: router_services
+  # externalnet enable is needed if bastion enabled
+  # disableExternalNetwork: false
   disableExternalNetwork: true
 #  externalNetwork:
 #    filter:
@@ -168,7 +176,9 @@ spec:
     cloudName: openstack
     name: capi-quickstart-cloud-config
   managedSecurityGroups:
+    # debug purpose allow allo traffic in cluster
     allowAllInClusterTraffic: true
+    #
     allNodesSecurityGroupRules:
     - description: Created by cluster-api-provider-openstack - BGP (calico)
       direction: ingress
@@ -189,9 +199,12 @@ spec:
       - controlplane
       - worker
 #  managedSubnets:
-#  - cidr: 192.168.4.0/24
+#  - cidr: 192.168.101.0/24
 #    dnsNameservers:
 #    - 192.168.2.10
+#    allocationPools:
+#      - start: 192.168.101.100
+#        end: 192.168.101.252
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: OpenStackMachineTemplate
@@ -218,10 +231,27 @@ spec:
             ipAddress: 192.168.2.100
 #        securityGroups:
 #          - filter:
-#               name: allow-ssh
+#              name: k8s-cluster-${NAMESPACE}-${CLUSTER_NAME}-secgroup-controlplane
+#          - filter:
+#              name: allow-http  ## this securitygroup must be created outside cluster-api
+#          - filter:
+#              name: allow-ssh  ## this securitygroup must be created outside cluster-api
+#
+#         allowedAddressPairs:
+#           - ipAddress: 192.168.101.100
+#         disablePortSecurity: true
+## Add root volume
 #      rootVolume:
 #        sizeGiB: 50
 #        type: __DEFAULT__
+## Add data volume
+#      additionalBlockDevices:
+#        - name: data
+#          sizeGiB: 10
+#          storage:
+#            type: Volume
+#            volume:
+#              type: __DEFAULT__
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: OpenStackMachineTemplate
