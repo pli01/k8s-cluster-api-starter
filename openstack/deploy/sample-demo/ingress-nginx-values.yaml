@@ -1,0 +1,15 @@
+## nginx configuration
+## Ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/index.md
+##
+controller:
+  hostNetwork: true
+  ## Use host ports 80 and 443
+  hostPort:
+    enabled: true
+    ports:
+      # -- 'hostPort' http port
+      http: 80
+      # -- 'hostPort' https port
+      https: 443
+  service:
+    type: NodePort

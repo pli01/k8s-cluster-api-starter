@@ -256,3 +256,6 @@ kubectl --kubeconfig=capi-quickstart.kubeconfig get node -A -o wide
 kubectl --kubeconfig=capi-quickstart.kubeconfig get pod -A -o wide
 ```
 
+# Run the demo
+
+In sample-demo, run both script to deploy whoami app exposed with ingress-nginx
