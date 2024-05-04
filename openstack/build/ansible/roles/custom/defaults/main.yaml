@@ -29,3 +29,5 @@ unnecessary_services:
   - unattended-upgrades
 unnecessary_packages:
   - unattended-upgrades
+
+apt_extra_repo_dir: /home/imagebuilder/ansible/roles/custom/files/

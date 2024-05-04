@@ -19,6 +19,7 @@ fi
 
 # add custom ansible roles
 docker_args=" $docker_args -v ./ansible/roles/custom:/home/imagebuilder/ansible/roles/custom "
+docker_args=" $docker_args -v ./ansible/roles/goss:/home/imagebuilder/ansible/roles/goss "
 
 docker run -it --rm --net=host \
   $docker_args \
