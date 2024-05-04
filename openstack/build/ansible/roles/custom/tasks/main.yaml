@@ -35,3 +35,11 @@
     name: "{{ unnecessary_packages }}"
     state: absent
     purge: true
+
+- name: Put templated sources.list in place
+  ansible.builtin.template:
+    src: etc/apt/sources.list.j2
+    dest: /home/imagebuilder/ansible/roles/custom/files/custom-ubuntu.list
+    mode: "0644"
+  delegate_to: localhost
+  when: ubuntu_repo is defined and ubuntu_repo != ""
