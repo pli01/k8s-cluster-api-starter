@@ -21,16 +21,14 @@ In this example, we use predefined resources
 
 # prepare mgmt instance
 
-```
+```bash
 # source `proxy` conf (if needed)
-```
 export HTTP_PROXY=http://proxy.internal:8888
 export HTTPS_PROXY=http://proxy.internal:8888
 export NO_PROXY=localhost,192.168.0.0/16
 export http_proxy=http://proxy.internal:8888
 export https_proxy=http://proxy.internal:8888
 export no_proxy=localhost,192.168.0.0/16
-```
 
 # install some tools (kind, kubectl...)
 curl -L https://raw.githubusercontent.com/numerique-gouv/dk8s/main/scripts/install-prereq.sh | bash
@@ -99,7 +97,7 @@ In this example:
   - security-group
   - root volume, etc...
 
-```
+```yaml
 #
 # sample customization
 #
@@ -194,7 +192,7 @@ kubectl create secret -n kube-system generic cloud-config --from-file=./cloud.co
 ## Tips to add cloud-init config at boot time
 - Customize containerd config to add http proxy
 
-```
+```yaml
 ---
 apiVersion: controlplane.cluster.x-k8s.io/v1beta1
 kind: KubeadmControlPlane
@@ -267,3 +265,18 @@ To install ingress-nginx and whoami sample-demo, run both scripts
 install_ingress-nginx.sh capi-quickstart
 install_whoami.sh capi-quickstart
 ```
+
+# Cluster templates
+
+The following workload cluster infrastructures have been tested in openstack cloud
+
+- managed subnet, without LBaaS, without ctrlplane HA
+
+![managed subnet, without LBaaS, without API HA](docs/cluster-api-cluster-managed-subnet.drawio.png)
+
+
+- existing network, without LBaaS, HA ctrlplane with kube-vip
+
+![existing subnet, without LBaaS, with API HA with kube-vip](docs/cluster-api-cluster-kube-vip.drawio.png)
+
+
