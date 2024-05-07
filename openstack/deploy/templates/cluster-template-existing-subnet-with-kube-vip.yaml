@@ -175,14 +175,24 @@ spec:
       - mkdir -p /etc/pre-kubeadm-commands
       - for script in $(find /etc/pre-kubeadm-commands/ -name '*.sh' -type f | sort);
         do echo "Running script $script"; "$script"; done
-      - systemctl daemon-reload
-      - systemctl restart containerd
     postKubeadmCommands:
       - echo debug-post >> /tmp/out
       - mkdir -p /etc/post-kubeadm-commands
       - for script in $(find /etc/post-kubeadm-commands/ -name '*.sh' -type f | sort);
         do echo "Running script $script"; "$script"; done
     files:
+      - content: |
+          #!/bin/bash
+          #
+          # pre-kubadm-scripts
+          #
+          set -e
+          # apply containerd config before kubeadm
+          systemctl daemon-reload
+          systemctl restart containerd
+        owner: root:root
+        path: /etc/pre-kubeadm-commands/10-containerd-restart.sh
+        permissions: "0700"
       - path: /etc/kubernetes/manifests/kube-vip.yaml
         owner: "root:root"
         permissions: "0644"
@@ -383,11 +393,27 @@ spec:
     spec:
       preKubeadmCommands:
         - echo debug-pre > /tmp/out
-        - systemctl daemon-reload
-        - systemctl restart containerd
+        - mkdir -p /etc/pre-kubeadm-commands
+        - for script in $(find /etc/pre-kubeadm-commands/ -name '*.sh' -type f | sort);
+          do echo "Running script $script"; "$script"; done
       postKubeadmCommands:
         - echo debug-post >> /tmp/out
+        - mkdir -p /etc/post-kubeadm-commands
+        - for script in $(find /etc/post-kubeadm-commands/ -name '*.sh' -type f | sort);
+          do echo "Running script $script"; "$script"; done
       files:
+        - content: |
+            #!/bin/bash
+            #
+            # pre-kubadm-scripts
+            #
+            set -e
+            # apply containerd config before kubeadm
+            systemctl daemon-reload
+            systemctl restart containerd
+          owner: root:root
+          path: /etc/pre-kubeadm-commands/10-containerd-restart.sh
+          permissions: "0700"
         - path: /etc/apt/apt.conf.d/99proxy
           owner: "root:root"
           permissions: "0644"
