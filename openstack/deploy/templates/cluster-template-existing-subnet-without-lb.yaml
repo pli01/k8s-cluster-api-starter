@@ -18,6 +18,10 @@ spec:
   template:
     spec:
       configDrive: true
+### Affinity/anti affinity
+#      serverGroup:
+#        filter:
+#          name: ${OPENSTACK_NODE_SERVER_GROUP}  ## must exists outside cluster-api
       flavor: ${OPENSTACK_NODE_MACHINE_FLAVOR}
       image:
         filter:
@@ -48,6 +52,11 @@ spec:
   template:
     spec:
       configDrive: true
+### Affinity/anti affinity
+#      serverGroup:
+#        filter:
+#          name: ${OPENSTACK_CONTROL_PLANE_SERVER_GROUP}  ## must exists outside cluster-api
+
       flavor: ${OPENSTACK_CONTROL_PLANE_MACHINE_FLAVOR}
       image:
         filter:
