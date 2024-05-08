@@ -83,7 +83,7 @@ spec:
 #        sizeGiB: 15
 #        type: __DEFAULT__
 #      additionalBlockDevices:
-#        - name: data
+#        - name: etcd     ## Add etcd external volume
 #          sizeGiB: 10
 #          storage:
 #            type: Volume
@@ -179,6 +179,23 @@ metadata:
   namespace: ${NAMESPACE}
 spec:
   kubeadmConfigSpec:
+##  Add external volume for etcd
+#    diskSetup:
+#      partitions:
+#      - device: /dev/vdb
+#        layout: true
+#        overwrite: false
+#        tableType: gpt
+#      filesystems:
+#      - device: /dev/vdb
+#        extraOpts:
+#        - -E
+#        - lazy_itable_init=1,lazy_journal_init=1
+#        filesystem: ext4
+#        label: etcd_disk
+#    mounts:
+#      - - LABEL=etcd_disk
+#        - /var/lib/etcddisk
     preKubeadmCommands:
       - echo debug-pre > /tmp/out
       - mkdir -p /etc/pre-kubeadm-commands
@@ -204,7 +221,7 @@ spec:
         permissions: "0700"
       - path: /etc/kubernetes/manifests/kube-vip.yaml
         owner: "root:root"
-        permissions: "0644"
+        permissions: "0600"
         content: |
           apiVersion: v1
           kind: Pod
@@ -349,6 +366,18 @@ spec:
         owner: root:root
         path: /etc/post-kubeadm-commands/50-kube-vip-restore.sh
         permissions: "0700"
+      - content: |
+          #!/bin/bash
+          grep '^      limits:' /etc/kubernetes/manifests/kube-apiserver.yaml >/dev/null 2>&1 && exit 0
+          MEM=$(free -m | grep '^Mem:' | awk '{print $2;}')
+          CPU=$(grep '^processor' /proc/cpuinfo | wc -l)
+          sed -i "/^ *requests:/i\      limits:\n        memory: $((10+3*$MEM/4))M\n        cpu: $((750*$CPU))m" /etc/kubernetes/manifests/kube-apiserver.yaml
+          sed -i "/^ *requests:/a\        memory: 512M" /etc/kubernetes/manifests/kube-apiserver.yaml
+          sync
+          systemctl restart kubelet
+        owner: root:root
+        path: /etc/post-kubeadm-commands/10-tweak-kubeapi-memlimit.sh
+        permissions: "0700"
       - path: /etc/apt/apt.conf.d/99proxy
         owner: "root:root"
         permissions: "0644"
@@ -372,6 +401,12 @@ spec:
       controllerManager:
         extraArgs:
           cloud-provider: external
+## use external etcd volume dir
+#      etcd:
+#        local:
+#          dataDir: /var/lib/etcddisk/etcd ## We Change the etcd data dir when moving to dedicated volume (because of "dir is not empty")
+#          extraArgs:
+#            quota-backend-bytes: "8589934592"
     initConfiguration:
       nodeRegistration:
         kubeletExtraArgs:
