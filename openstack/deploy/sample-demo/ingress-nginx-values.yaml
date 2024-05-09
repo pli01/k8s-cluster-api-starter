@@ -13,3 +13,5 @@ controller:
       https: 443
   service:
     type: NodePort
+  config:
+    use-forwarded-headers: "true"
