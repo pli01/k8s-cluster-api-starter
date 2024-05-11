@@ -30,6 +30,9 @@ spec:
     port: 80
   selector:
     app: whoami
+### To debug metallb install without ingress-nginx
+#  loadBalancerClass: metallb.universe.tf/metallb
+#  type: LoadBalancer
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -49,3 +52,4 @@ spec:
             name: whoami
             port:
               number: 80
+#    host: whoami.MYDOMAIN.ORG

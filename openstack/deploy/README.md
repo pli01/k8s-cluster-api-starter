@@ -260,13 +260,47 @@ Prereq:
 - Assume an External LB is provisionned outside cluster-api. LB can contact worker node (http,https)
 - external LB redirect trafic to port 80 or 443 on worker node with ingress-nginx
 
+## Without LB, only ingress-nginx
+
 To install ingress-nginx and whoami sample-demo, run both scripts
 ```
 install_ingress-nginx.sh capi-quickstart
 install_whoami.sh capi-quickstart
 ```
 
+## With LB (metallb) + ingress-nginx
+
+To install metallb + ingress-nginx and whoami sample-demo, run both scripts
+
+a fixed IP must be reserved before for metallb ip pool
+
+```
+install_metallb.sh capi-quickstart
+install_ingress-nginx-metallb.sh capi-quickstart
+install_whoami.sh capi-quickstart
+```
+
+To verify:
+```
+# metallb ipaddresspool
+kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig get -n metallb L2Advertisement,IPAddressPool
+NAME                            IPADDRESSPOOLS   IPADDRESSPOOL SELECTORS   INTERFACES
+l2advertisement.metallb.io/lb   ["first-pool"]
+
+NAME                                  AUTO ASSIGN   AVOID BUGGY IPS   ADDRESSES
+ipaddresspool.metallb.io/first-pool   true          false             ["192.168.101.11/32"]
+
+# verify ingress-nginx using loadbalancer and use external ip
+kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig get svc -n ingress-nginx   ingress-nginx-controller
+NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE
+ingress-nginx-controller   LoadBalancer   10.106.12.83   192.168.101.11   80:30848/TCP,443:31246/TCP   68m
+
+```
+
 # Cluster templates
+
+cluster-templates are available in templates dir
+
 
 The following workload cluster infrastructures have been tested in openstack cloud
 
@@ -279,4 +313,4 @@ The following workload cluster infrastructures have been tested in openstack clo
 
 ![existing subnet, without LBaaS, with API HA with kube-vip](docs/cluster-api-cluster-kube-vip.drawio.png)
 
-
+- existing subnet, with LB metallb for workload traffic, with API HA with kube-vip
