@@ -19,6 +19,13 @@ In this example, we use predefined resources
  - cluster mgmt is installed on bastion instance
  - workload cluster will be deployed in existing subnet
 
+We use following components:
+- cluster-api
+- cluster-api-provider-openstack
+- kube-vip
+- metallb
+- ingress-nginx
+
 # prepare mgmt instance
 
 ```bash
@@ -272,16 +279,28 @@ install_whoami.sh capi-quickstart
 
 To install metallb + ingress-nginx and whoami sample-demo, run both scripts
 
-a fixed IP must be reserved before for metallb ip pool
+A fixed IP must be reserved for metallb ip pool.
+in the cluster template file, set all fixed ip used by metallb ip adresspool in openstack machine worker pool
+```
+kind: OpenStackMachineTemplate
+  name: ${CLUSTER_NAME}-md-0
+          allowedAddressPairs:
+            - ipAddress: ${METALLB_FIXED_IP}
+```
+
 
 ```
+# install metallb + ingress-nginx
 install_metallb.sh capi-quickstart
 install_ingress-nginx-metallb.sh capi-quickstart
+
 install_whoami.sh capi-quickstart
 ```
 
 To verify:
 ```
+# in this demo, 192.168.101.11 is the fixed ip exposed by the LB
+
 # metallb ipaddresspool
 kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig get -n metallb L2Advertisement,IPAddressPool
 NAME                            IPADDRESSPOOLS   IPADDRESSPOOL SELECTORS   INTERFACES
@@ -294,6 +313,10 @@ ipaddresspool.metallb.io/first-pool   true          false             ["192.168.
 kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig get svc -n ingress-nginx   ingress-nginx-controller
 NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE
 ingress-nginx-controller   LoadBalancer   10.106.12.83   192.168.101.11   80:30848/TCP,443:31246/TCP   68m
+
+kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig get ingress -A
+NAMESPACE   NAME            CLASS   HOSTS                          ADDRESS          PORTS   AGE
+hello       hello-ingress   nginx   hello.demo.mydomain.org   192.168.101.11   80      41s
 
 ```
 
@@ -314,3 +337,5 @@ The following workload cluster infrastructures have been tested in openstack clo
 ![existing subnet, without LBaaS, with API HA with kube-vip](docs/cluster-api-cluster-kube-vip.drawio.png)
 
 - existing subnet, with LB metallb for workload traffic, with API HA with kube-vip
+
+![existing subnet, with LB metallb for workload traffic, with API HA with kube-vip](docs/cluster-api-cluster-kube-vip-metallb.drawio.png)
