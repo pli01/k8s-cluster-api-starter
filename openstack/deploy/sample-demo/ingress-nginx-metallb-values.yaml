@@ -1,0 +1,23 @@
+## nginx configuration
+## Ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/index.md
+##
+controller:
+## nginx config
+  config:
+    use-forwarded-headers: "true"
+## with LB metallb
+  publishService:
+    enabled: true
+  kind: "DaemonSet"
+  service:
+    enabled: true
+    externalTrafficPolicy: Local
+    loadBalancerClass: "metallb.universe.tf/metallb"
+  daemonset:
+    hostPorts:
+      http: 80
+      https: 443
+defaultBackend:
+  replicaCount: 2
+podSecurityPolicy:
+  enabled: true

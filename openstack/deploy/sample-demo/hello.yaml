@@ -1,35 +1,35 @@
-# Create deployment: 2 whoami replica
+# Create deployment: 2 hello replica
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: whoami-deployment
+  name: hello-deployment
 spec:
   selector:
     matchLabels:
-      app: whoami
+      app: hello
   replicas: 2
   template:
     metadata:
       labels:
-        app: whoami
+        app: hello
     spec:
       containers:
-      - name: whoami
-        image: containous/whoami:latest
+      - name: hello
+        image: paulbouwer/hello-kubernetes:1
         ports:
-        - containerPort: 80
+        - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: whoami
+  name: hello
 spec:
   ports:
   - name: http
-    targetPort: 80
-    port: 80
+    targetPort: 8080
+    port: 8080
   selector:
-    app: whoami
+    app: hello
 ### To debug metallb install without ingress-nginx
 #  loadBalancerClass: metallb.universe.tf/metallb
 #  type: LoadBalancer
@@ -37,7 +37,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: whoami-ingress
+  name: hello-ingress
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
 spec:
@@ -49,7 +49,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: whoami
+            name: hello
             port:
-              number: 80
-#    host: whoami.MYDOMAIN.ORG
+              number: 8080
+    host: hello.MYDOMAIN.ORG

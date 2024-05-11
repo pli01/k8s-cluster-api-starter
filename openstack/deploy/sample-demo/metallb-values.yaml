@@ -1,0 +1,2 @@
+# define loadbalancerclass (must be used in ingress-nginx or service )
+loadBalancerClass: "metallb.universe.tf/metallb"
