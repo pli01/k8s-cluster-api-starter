@@ -1,2 +1,14 @@
 # define loadbalancerclass (must be used in ingress-nginx or service )
 loadBalancerClass: "metallb.universe.tf/metallb"
+controller:
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: ""
+  tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+speaker:
+  tolerateMaster: false
