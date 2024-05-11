@@ -10,7 +10,10 @@ CLUSTER_NAME="${1:? argument not defined. run ./configure_cluster my-cluster-nam
 METALLB_VIP_CIDR=${METALLB_VIP_CIDR:-192.168.101.11/32}
 METALLB_NAMESPACE=${METALLB_NAMESPACE:-metallb}
 
-helm --kubeconfig=${CLUSTER_NAME}.kubeconfig upgrade --install metallb metallb --repo https://metallb.github.io/metallb --namespace ${METALLB_NAMESPACE} --create-namespace -f sample-demo/metallb-values.yaml 
+helm --kubeconfig=${CLUSTER_NAME}.kubeconfig upgrade --install metallb metallb --repo https://metallb.github.io/metallb --namespace ${METALLB_NAMESPACE} --create-namespace -f sample-demo/metallb-values.yaml  --wait-for-jobs  --wait
+
+kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig wait crds/l2advertisements.metallb.io  --for condition=established --timeout=60s
+kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig wait crds/ipaddresspools.metallb.io  --for condition=established --timeout=60s
 
 cat <<EOF_CONFIG | kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig -n ${METALLB_NAMESPACE} apply -f -
 ---
