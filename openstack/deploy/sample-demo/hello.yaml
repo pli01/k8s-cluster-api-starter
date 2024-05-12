@@ -52,4 +52,4 @@ spec:
             name: hello
             port:
               number: 8080
-    host: hello.MYDOMAIN.ORG
+#   host: hello.MYDOMAIN.ORG
