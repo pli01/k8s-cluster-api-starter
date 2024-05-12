@@ -29,3 +29,12 @@ unnecessary_services:
   - unattended-upgrades
 unnecessary_packages:
   - unattended-upgrades
+
+apt_extra_repo_dir: /tmp
+
+grub_cfg_config_file: /etc/default/grub.d/99-custom.cfg
+grub_cfg:
+  - key: GRUB_CMDLINE_LINUX_DEFAULT
+    value: '"${GRUB_CMDLINE_LINUX_DEFAULT} ipv6.disable=1"'
+  - key: GRUB_CMDLINE_LINUX
+    value: '"${GRUB_CMDLINE_LINUX} ipv6.disable=1"'

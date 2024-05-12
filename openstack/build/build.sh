@@ -19,8 +19,13 @@ fi
 
 # add custom ansible roles
 docker_args=" $docker_args -v ./ansible/roles/custom:/home/imagebuilder/ansible/roles/custom "
+docker_args=" $docker_args -v ./ansible/roles/goss:/home/imagebuilder/ansible/roles/goss "
+docker_args=" $docker_args -v ./ansible.cfg:/home/imagebuilder/ansible.cfg "
+docker_args=" $docker_args -v ./packer/openstack/packer.json:/home/imagebuilder/packer/openstack/packer.json "
+docker_args=" $docker_args -v ./packer/config/ansible-args.json:/home/imagebuilder/packer/config/ansible-args.json "
+docker_args=" $docker_args -v ./packer/config/common.json:/home/imagebuilder/packer/config/common.json "
 
-docker run -it --rm --net=host \
+docker run --name "image-builder" -it --rm --net=host \
   $docker_args \
 	-v ./packer.json:/data/packer.json \
 	-v ./ansible/roles/setup/templates/etc/apt/sources.list.j2:/home/imagebuilder/ansible/roles/setup/templates/etc/apt/sources.list.j2 \
