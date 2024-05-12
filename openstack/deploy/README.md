@@ -257,6 +257,10 @@ kubectl get events -A --sort-by='.lastTimestamp'
 # scale nodepool
 kubectl scale machinedeployment capi-quickstart-md-0 --replicas=2
 
+# scale controlplane
+kubectl scale machinedeployment capi-quickstart-control-plane --replicas=3
+
+
 # On mgmt cluster, get kubeconfig of workload cluster
 clusterctl get kubeconfig capi-quickstart  > capi-quickstart.kubeconfig
 
