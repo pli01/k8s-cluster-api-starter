@@ -1,0 +1,4 @@
+| package | release url |
+| --- | --- |
+| registry.k8s.io/scl-image-builder/cluster-node-image-builder-amd64:$IMAGE_BUILDER_VERSION | https://github.com/kubernetes-sigs/image-builder/releases |
+| kubernetes version  | https://github.com/kubernetes/kubernetes/releases |

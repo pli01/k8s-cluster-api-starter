@@ -13,11 +13,10 @@
   "ssh_username": "cloudadm",
   "http_proxy": "http://192.168.2.10:8888",
   "https_proxy": "http://192.168.2.10:8888",
-  "ansible_user_vars": "http_proxy=http://192.168.2.10:8888 https_proxy=http://192.168.2.10:8888 no_proxy=localhost,192.168.0.0/16 ubuntu_repo={{ user `custom_ubuntu_repo`}}",
+  "ansible_user_vars": "http_proxy=http://192.168.2.10:8888 https_proxy=http://192.168.2.10:8888 no_proxy=localhost,192.168.0.0/16",
   "node_custom_roles_pre": "custom goss",
-  "disable_public_repos": "true",
-  "reenable_public_repos": "false",
-  "remove_extra_repos": "",
-  "extra_repos": "/home/imagebuilder/ansible/roles/custom/files/custom-ubuntu.list",
-  "custom_ubuntu_repo": "https://ubuntu.mirrors.ovh.net"
+  "ubuntu_repo": "https://ubuntu.mirrors.ovh.net/ubuntu",
+  "ubuntu_security_repo": "https://ubuntu.mirrors.ovh.net/ubuntu",
+  "goss_download_path": "/usr/local/bin/goss-linux-amd64",
+  "goss_skip_install": "true"
 }
