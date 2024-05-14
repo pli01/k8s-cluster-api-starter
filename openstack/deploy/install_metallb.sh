@@ -1,6 +1,17 @@
 #!/bin/bash
 #
 CLUSTER_NAME="${1:? argument not defined. run ./configure_cluster my-cluster-name }"
+
+kubeconfig_dir="$(dirname $0)"
+KUBECONFIG="$kubeconfig_dir/${CLUSTER_NAME}.kubeconfig"
+
+if [ ! -f "${KUBECONFIG}" ] ; then
+  echo "${KUBECONFIG} not found"
+  exit 1
+fi
+
+kubectl_args="--kubeconfig=${KUBECONFIG}"
+
 #
 # install helm metallb with overrided values
 # For demo, external LB is provsionned in openstack outside cluster api
@@ -10,12 +21,12 @@ CLUSTER_NAME="${1:? argument not defined. run ./configure_cluster my-cluster-nam
 METALLB_FIXED_IP=${METALLB_FIXED_IP:-192.168.101.11/32}
 METALLB_NAMESPACE=${METALLB_NAMESPACE:-metallb}
 
-helm --kubeconfig=${CLUSTER_NAME}.kubeconfig upgrade --install metallb metallb --repo https://metallb.github.io/metallb --namespace ${METALLB_NAMESPACE} --create-namespace -f sample-demo/metallb-values.yaml  --wait-for-jobs  --wait
+helm ${kubectl_args} upgrade --install metallb metallb --repo https://metallb.github.io/metallb --namespace ${METALLB_NAMESPACE} --create-namespace -f sample-demo/metallb-values.yaml  --wait-for-jobs  --wait
 
-kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig wait crds/l2advertisements.metallb.io  --for condition=established --timeout=60s
-kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig wait crds/ipaddresspools.metallb.io  --for condition=established --timeout=60s
+kubectl ${kubectl_args} wait crds/l2advertisements.metallb.io  --for condition=established --timeout=60s
+kubectl ${kubectl_args} wait crds/ipaddresspools.metallb.io  --for condition=established --timeout=60s
 
-cat <<EOF_CONFIG | kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig -n ${METALLB_NAMESPACE} apply -f -
+cat <<EOF_CONFIG | kubectl ${kubectl_args} -n ${METALLB_NAMESPACE} apply -f -
 ---
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
