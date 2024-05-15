@@ -7,7 +7,7 @@ spec:
   options:
     waitForJobs: true
     wait: true
-    timeout: 30m
+    timeout: 30m0s
     install:
       createNamespace: true
   clusterSelector:
