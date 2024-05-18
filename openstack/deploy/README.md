@@ -1,4 +1,4 @@
-# deploy cluster-api openstack
+# deploy cluster-api on openstack
 
 The following steps must run on an instance with:
   - install prereq: yq, env.rc
@@ -78,17 +78,24 @@ cat sample-clouds.yaml |envsubst > clouds.yaml
 kind create cluster --name mgmt
 ```
 - wait pods ready
-- clusterctl init --infrastructure openstack
+- init cluster with helm support
 ```
 clusterctl init --infrastructure openstack --addon helm
 ```
 - wait pods ready
-- if needed, configure capo pod (cluster api openstack) to contact openstack API with `http_proxy` env
+- configure capo pod (cluster api provider openstack) and caaph (Cluster API Add-on Provider Helm) to contact openstack API with `http_proxy` env
 ```
 bash configure_capo.sh
 ```
 
 # Create workload configuration
+
+Different ways to create a workload cluster:
+  - with clusterctl template and kubectl apply
+  - with helm charts
+
+## with clusterctl template and kubectl apply
+
 - generate cluster config from template (without lb)
 
 ```
@@ -225,7 +232,15 @@ spec:
     clusterConfiguration:
 ```
 
+## with helm chart 
+
+See helm-charts directory , and customize values files
+
 # create workload cluster
+- with kubectl apply
+- with helm chart
+
+## with kubectl apply
 
 Create the workload cluster, from the previous template (ex: capi-quickstart.yaml)
 
@@ -244,6 +259,10 @@ kubectl get machine -A
 openstack server list
 
 ```
+
+## with helm chart
+
+See helm-charts directory, using helm
 
 # Useful commands
 ```
@@ -272,11 +291,13 @@ kubectl --kubeconfig=capi-quickstart.kubeconfig get pod -A -o wide
 
 # Run the demo
 
+## With kubectl apply
+
 Prereq:
 - Assume an External LB is provisionned outside cluster-api. LB can contact worker node (http,https)
 - external LB redirect trafic to port 80 or 443 on worker node with ingress-nginx
 
-## Without LB, only ingress-nginx
+### Without LB, only ingress-nginx
 
 To install ingress-nginx and whoami sample-demo, run both scripts
 ```
@@ -284,7 +305,7 @@ install_ingress-nginx.sh capi-quickstart
 install_whoami.sh capi-quickstart
 ```
 
-## With LB (metallb) + ingress-nginx
+### With LB (metallb) + ingress-nginx
 
 To install metallb + ingress-nginx and whoami sample-demo, run both scripts
 
@@ -328,6 +349,13 @@ NAMESPACE   NAME            CLASS   HOSTS                          ADDRESS      
 hello       hello-ingress   nginx   hello.demo.mydomain.org   192.168.101.11   80      41s
 
 ```
+
+## With helm chart
+
+See helm-charts directory
+
+### With LB (metallb) + ingress-nginx
+
 
 # Cluster templates
 

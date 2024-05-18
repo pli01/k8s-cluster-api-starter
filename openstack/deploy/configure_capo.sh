@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# configure capo to use http_proxy
+# configure capo and caaph to use http_proxy
 # import configmap http proxy config
 #
 if [ ! -z "${http_proxy}" ]; then
@@ -8,7 +8,9 @@ http_proxy="${http_proxy:? error}"
 https_proxy="${https_proxy:? error}"
 no_proxy=".svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,10.96.0.0/12,172.16.0.0/16,192.168.0.0/16"
 
-cat <<EOF_CONFIG | kubectl -n capo-system apply -f -
+for controller in capo caaph ; do
+echo "# create configmap proxy-config $controller
+cat <<EOF_CONFIG | kubectl -n $controller-system apply -f -
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -24,8 +26,10 @@ data:
 EOF_CONFIG
 
 #
-# configure capo http_proxy
+# configure capo/caaph http_proxy
 #
-kubectl set env deployment/capo-controller-manager --namespace=capo-system --from=configmap/proxy-config --containers='*'
+echo "# set env proxy-config $controller
+kubectl set env deployment/$controller-controller-manager --namespace=$controller-system --from=configmap/proxy-config --containers='*'
+done
 fi
 
