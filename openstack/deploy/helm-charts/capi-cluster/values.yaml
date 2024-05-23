@@ -1,0 +1,64 @@
+provider:
+  openstack: false
+
+global:
+  # clusterName: cluster1-dev
+  kubernetes:
+    version: v1.29.4
+  pods:
+    cidrBlocks: "172.16.0.0/16"
+  services:
+    cidrBlocks: "10.96.0.0/12"
+  # helmchartproxy installed inside workload cluster
+addons:
+  cni:
+    enabled: "true"
+    type: calico
+    version: v3.27.3
+  ccm:
+    enabled: "true"
+    type: openstack
+    version: 2.30.1
+  metallb:
+    enabled: "true"
+    type: metallb
+    version: 0.14.5
+
+openstack:
+  sshkeyname: REPLACE_SSH_KEY_NAME_
+  router: router_services
+  network: network_kube
+  subnet: subnet_kube
+  bastion:
+    enabled: false
+    image: ubuntu22.04
+    flavor: CO1.2
+  controlplane:
+    replicas: 1
+    image: ubuntu-2204-kube-v1.29.4
+    flavor: CO1.2
+    availabilityZones:
+      - AZ1
+      - AZ2
+    # reserved ip/port outside cluster-api
+    apiServerFixedIP: 192.168.101.10
+  worker:
+    replicas: 0
+    image: ubuntu-2204-kube-v1.29.4
+    flavor: CO1.2
+    # reserved ip/port outside cluster-api
+    ingressServerFixedIP: 192.168.101.11
+#
+# openstack cloud config
+#
+#  cloudConfig:
+#    # used by ccm-openstack
+#    cloudConf:
+#      global:
+#        auth-url: _OS_AUTH_URL/v3_
+#        application-credential-id=_OS_APPLICATION_CREDENTIAL_ID_
+#        application-credential-secret=_OS_APPLICATION_CREDENTIAL_SECRET_
+#        region: "__OS_REGION_NAME_"
+#    # used by cluster api provider openstack (capo)
+#    cacert: _REPLACE_WITH_B64ENCODED_CACERT_
+#    cloudsYaml: _REPLACE_WITH_B64_cloud.yaml_

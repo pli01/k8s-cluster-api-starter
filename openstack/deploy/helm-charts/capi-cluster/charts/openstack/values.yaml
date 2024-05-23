@@ -1,0 +1,34 @@
+addons:
+  cni: {}
+  ccm: {}
+  metallb: {}
+  ingress: {}
+# sshkeyname: REPLACE_MY_KEY
+
+#router: router_services
+#network: network_kube
+#subnet: subnet_kube
+
+#bastion:
+#  enabled: false
+#  image: ubuntu22.04
+#  flavor: CO1.2
+#controlplane:
+#  replicas: 1
+#  image: ubuntu-2204-kube-v1.29.4
+#  flavor: CO1.2
+#  apiServerFixedIP: 192.168.101.10
+#  availabilityZones:
+#    - AZ1
+#    - AZ2
+#worker:
+#  replicas: 0
+#  image: ubuntu-2204-kube-v1.29.4
+#  flavor: CO1.2
+#  ingressServerFixedIP: 192.168.101.11
+cloudConfig:
+  # b64 encoded value
+  cacert:
+  cloudsYaml:
+addons:
+  ipaddresspool: {}

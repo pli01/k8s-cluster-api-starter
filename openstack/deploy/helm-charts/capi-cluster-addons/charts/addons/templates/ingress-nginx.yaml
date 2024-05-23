@@ -1,0 +1,55 @@
+{{ if .Values.global.addons.ingress.enabled -}}
+apiVersion: addons.cluster.x-k8s.io/v1alpha1
+kind: HelmChartProxy
+metadata:
+  name: ingress-nginx
+spec:
+  options:
+    waitForJobs: true
+    wait: true
+    timeout: 30m
+    install:
+      createNamespace: true
+  clusterSelector:
+    matchLabels:
+      ingress.enabled: "true"
+      ingress.type: {{ .Values.global.addons.ingress.type }}
+      ingress.version: {{ .Values.global.addons.ingress.version }}
+  repoURL: https://kubernetes.github.io/ingress-nginx
+  chartName: ingress-nginx
+  version: {{ .Values.global.addons.ingress.version }}
+  releaseName: ingress-nginx
+  namespace: ingress-nginx
+  valuesTemplate: |
+    ## nginx configuration
+    ## Ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/index.md
+    ##
+    controller:
+    ## nginx config
+      config:
+        use-forwarded-headers: "true"
+    ## with LB metallb
+      publishService:
+        enabled: true
+      kind: "DaemonSet"
+      service:
+        enabled: true
+        externalTrafficPolicy: Local
+        loadBalancerClass: "metallb.universe.tf/metallb"
+      daemonset:
+        hostPorts:
+          http: 80
+          https: 443
+      nodeSelector:
+        ingress-ready: "true"
+      admissionWebhooks:
+        nodeSelector:
+        ingress-ready: "true"
+    defaultBackend:
+      replicaCount: 2
+      nodeSelector:
+        ingress-ready: "true"
+    podSecurityPolicy:
+      enabled: true
+  #
+{{ end -}}

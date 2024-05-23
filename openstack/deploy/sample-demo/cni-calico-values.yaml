@@ -1,0 +1,26 @@
+installation:
+  enabled: true
+  cni:
+    type: Calico
+  calicoNetwork:
+    bgp: Enabled # if encapsulation IPIP
+    # mtu: 1350
+    ipPools:
+    - cidr: 172.16.0.0/16
+      encapsulation: IPIP
+      natOutgoing: Enabled
+      nodeSelector: all()
+#  calicoNodeDaemonSet:
+#    metadata:
+#      labels:
+#        debug: "true"
+#    spec:
+#      template:
+#        spec:
+#          containers:
+#          - name: calico-node
+#            env:
+#            - name: FELIX_USAGEREPORTINGENABLED
+#              value: "false"
+apiServer:
+  enabled: false
