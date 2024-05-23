@@ -12,3 +12,6 @@ controller:
 
 speaker:
   tolerateMaster: false
+  ## deploy on ingress node
+  #nodeSelector:
+  #  ingress-ready: "true"

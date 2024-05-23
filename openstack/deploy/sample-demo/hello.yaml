@@ -18,6 +18,13 @@ spec:
         image: paulbouwer/hello-kubernetes:1
         ports:
         - containerPort: 8080
+#      affinity:
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#            - matchExpressions:
+#              - key: ingress-ready
+#                operator: DoesNotExist
 ---
 apiVersion: v1
 kind: Service
@@ -40,6 +47,8 @@ metadata:
   name: hello-ingress
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
+    # IP White list
+    # nginx.ingress.kubernetes.io/whitelist-source-range: x.x.x.x/32,y.y.y.y/32
 spec:
   ingressClassName: nginx
   rules:

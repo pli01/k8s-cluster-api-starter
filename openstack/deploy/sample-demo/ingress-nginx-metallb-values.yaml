@@ -17,7 +17,16 @@ controller:
     hostPorts:
       http: 80
       https: 443
+## deploy on ingress node
+#  nodeSelector:
+#    ingress-ready: "true"
+#  admissionWebhooks:
+#    nodeSelector:
+#    ingress-ready: "true"
 defaultBackend:
   replicaCount: 2
+## deploy on ingress node
+#  nodeSelector:
+#    ingress-ready: "true"
 podSecurityPolicy:
   enabled: true
