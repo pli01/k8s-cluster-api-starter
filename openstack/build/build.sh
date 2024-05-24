@@ -22,6 +22,7 @@ fi
 docker_args=" $docker_args -v ./ansible/roles/custom:/home/imagebuilder/ansible/roles/custom "
 docker_args=" $docker_args -v ./ansible/roles/goss:/home/imagebuilder/ansible/roles/goss "
 docker_args=" $docker_args -v ./ansible.cfg:/home/imagebuilder/ansible.cfg "
+docker_args=" $docker_args -v ./packer/openstack/:/home/imagebuilder/packer/openstack/ "
 
 docker run --name "image-builder" -it --rm --net=host \
   $docker_args \
