@@ -10,7 +10,7 @@ metadata:
     note: generated
   labels:
     type: generated
-  name: metallb-config-{{ .Values.global.clusterName }}
+  name: {{ .Values.global.clusterName }}-metallb-config
   namespace: default
 data:
   metallbConfig: |
@@ -38,7 +38,7 @@ data:
 apiVersion: addons.cluster.x-k8s.io/v1beta1
 kind: ClusterResourceSet
 metadata:
-  name: metallb-config-{{ .Values.global.clusterName }}
+  name: {{ .Values.global.clusterName }}-metallb-config
   namespace: default
 spec:
   clusterSelector:
@@ -47,6 +47,6 @@ spec:
       cluster.x-k8s.io/name: {{ .Values.global.clusterName }}
   resources:
   - kind: ConfigMap
-    name: metallb-config-{{ .Values.global.clusterName }}
+    name: {{ .Values.global.clusterName }}-metallb-config
   strategy: Reconcile
 {{ end -}}

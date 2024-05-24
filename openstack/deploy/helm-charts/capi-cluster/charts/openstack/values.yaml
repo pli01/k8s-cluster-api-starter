@@ -14,6 +14,7 @@ addons:
 #  image: ubuntu22.04
 #  flavor: CO1.2
 #controlplane:
+#  version: v1.29.4
 #  replicas: 1
 #  image: ubuntu-2204-kube-v1.29.4
 #  flavor: CO1.2
@@ -21,14 +22,15 @@ addons:
 #  availabilityZones:
 #    - AZ1
 #    - AZ2
-#worker:
-#  replicas: 0
-#  image: ubuntu-2204-kube-v1.29.4
-#  flavor: CO1.2
-#  ingressServerFixedIP: 192.168.101.11
+#workers:
+#  - name: md-0
+#    version: v1.29.4
+#    replicas: 0
+#    image: ubuntu-2204-kube-v1.29.4
+#    flavor: CO1.2
+#    ingressServerFixedIP: 192.168.101.11
 cloudConfig:
   # b64 encoded value
   cacert:
   cloudsYaml:
-addons:
-  ipaddresspool: {}
+  cloudConf: {}
