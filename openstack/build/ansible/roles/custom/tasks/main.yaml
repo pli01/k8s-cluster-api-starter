@@ -57,4 +57,5 @@
     state: "{{ item.state | default('present') }}"
   with_items: "{{ grub_cfg }}"
 
-
+- name: Run update-grub
+  ansible.builtin.shell: /usr/sbin/update-grub
