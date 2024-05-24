@@ -1,5 +1,7 @@
 {
-  "source_image": "5eff1544-24b2-48a1-862f-e11c8368ec85",    # ubuntu2204
+  "source_image": "5eff1544-24b2-48a1-862f-e11c8368ec85",    # set id for ubuntu2204
+  "source_image": "",                                        #   or use image name
+  "source_image_filter_name": "ubuntu22.04",                 #   with filter_name
   "networks": "a1f9f345-b1f8-45a5-b4f2-228c471d0071",        # network accessible from builder instance
   "security_groups": "df22e412-0f85-4cdd-a54b-39a07ef8b314", # allow ssh
   "use_floating_ip": "false",                                # disable floating ip
