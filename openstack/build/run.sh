@@ -7,16 +7,18 @@
 
 kube_version="${1:-}"
 docker_args=" $2 "
-IMAGE_BUILDER_VERSION="${IMAGE_BUILDER_VERSION:-v0.1.26}"
+IMAGE_BUILDER_VERSION="${IMAGE_BUILDER_VERSION:-v0.1.27}"
 
 if [[ $# -gt 0 &&  "$kube_version" != "" ]]; then
-  docker_args=" $docker_args  -v ./extra_vars_kube_${kube_version}.json:/data/extra_vars_kube_${kube_version}.json "
+  docker_args=" $docker_args  -v ./extra_vars/kube_${kube_version}.json:/data/extra_vars_kube_${kube_version}.json "
   EXTRA_PACKER_VAR_FILES="/data/extra_vars_kube_${kube_version}.json"
 fi
 
 # add custom ansible roles
 docker_args=" $docker_args -v ./ansible/roles/custom:/home/imagebuilder/ansible/roles/custom "
 docker_args=" $docker_args -v ./ansible/roles/goss:/home/imagebuilder/ansible/roles/goss "
+docker_args=" $docker_args -v ./ansible.cfg:/home/imagebuilder/ansible.cfg "
+docker_args=" $docker_args -v ./packer/openstack/:/home/imagebuilder/packer/openstack/ "
 
 docker run -it --rm --net=host \
   $docker_args \

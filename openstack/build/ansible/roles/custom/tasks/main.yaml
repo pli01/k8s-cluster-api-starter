@@ -36,15 +36,6 @@
     state: absent
     purge: true
 
-- name: Put templated sources.list in place
-  ansible.builtin.template:
-    src: etc/apt/sources.list.j2
-    dest: "{{ apt_extra_repo_dir }}/custom-ubuntu.list"
-    mode: "0644"
-  delegate_to: localhost
-  become: false
-  when: ubuntu_repo is defined and ubuntu_repo != ""
-
 - name: Configure /etc/default/grub.d/99-custom.cfg
   lineinfile:
     create: true
