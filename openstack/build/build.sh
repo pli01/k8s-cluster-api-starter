@@ -13,7 +13,7 @@ docker_args=" $2 "
 IMAGE_BUILDER_VERSION="${IMAGE_BUILDER_VERSION:-v0.1.27}"
 
 if [[ $# -gt 0 &&  "$kube_version" != "" ]]; then
-  docker_args=" $docker_args  -v ./extra_vars_kube_${kube_version}.json:/data/extra_vars_kube_${kube_version}.json "
+  docker_args=" $docker_args  -v ./extra_vars/kube_${kube_version}.json:/data/extra_vars_kube_${kube_version}.json "
   EXTRA_PACKER_VAR_FILES="/data/extra_vars_kube_${kube_version}.json"
 fi
 
