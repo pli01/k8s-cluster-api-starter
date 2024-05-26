@@ -230,6 +230,23 @@ spec:
           {{- if .Values.global.no_proxy }}
           Environment="NO_PROXY=.svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,192.168.0.0/16,{{ .Values.global.pods.cidrBlocks }},{{ .Values.global.services.cidrBlocks }}"
           {{- end }}
+#      - path: /etc/containerd/conf.d/registry.toml
+#        owner: "root:root"
+#        permissions: "0644"
+#        content: |
+#          # Setup Default Mirror for All Registries
+#          [plugins."io.containerd.grpc.v1.cri".registry]
+#            config_path = "/etc/containerd/certs.d"
+#      - path: /etc/containerd/certs.d/_default/hosts.toml
+#        owner: "root:root"
+#        permissions: "0644"
+#        content: |
+#          {{- if .Values.global.container_registry }}
+#          # Setup Default Mirror for All Registries
+#          server = "{{ .Values.global.container_registry }}"
+#          [host."{{ .Values.global.container_registry }}"]
+#            capabilities = ["pull", "resolve"]
+#          {{- end }}
     clusterConfiguration:
       apiServer:
         extraArgs:
