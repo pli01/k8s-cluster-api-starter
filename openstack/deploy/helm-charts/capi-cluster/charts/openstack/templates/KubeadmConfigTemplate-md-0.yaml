@@ -1,7 +1,8 @@
+{{- range $worker := $.Values.workers }}
 apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
 kind: KubeadmConfigTemplate
 metadata:
-  name: {{ .Values.global.clusterName }}-md-0
+  name: {{ $.Values.global.clusterName }}-{{ $worker.name }}
 spec:
   template:
     spec:
@@ -33,11 +34,11 @@ spec:
           permissions: "0644"
           content: |
             Acquire {
-              {{- if .Values.global.http_proxy }}
-              http::Proxy {{ .Values.global.http_proxy | quote }};
+              {{- if $.Values.global.http_proxy }}
+              http::Proxy {{ $.Values.global.http_proxy | quote }};
               {{- end }}
-              {{- if .Values.global.https_proxy }}
-              https::Proxy {{ .Values.global.https_proxy | quote }};
+              {{- if $.Values.global.https_proxy }}
+              https::Proxy {{ $.Values.global.https_proxy | quote }};
               {{- end }}
               }
         - path: /etc/systemd/system/containerd.service.d/http-proxy.conf
@@ -45,14 +46,14 @@ spec:
           permissions: "0644"
           content: |
             [Service]
-            {{- if .Values.global.http_proxy }}
-            Environment="HTTP_PROXY={{ .Values.global.http_proxy }}"
+            {{- if $.Values.global.http_proxy }}
+            Environment="HTTP_PROXY={{ $.Values.global.http_proxy }}"
             {{- end }}
-            {{- if .Values.global.https_proxy }}
-            Environment="HTTPS_PROXY={{ .Values.global.https_proxy }}"
+            {{- if $.Values.global.https_proxy }}
+            Environment="HTTPS_PROXY={{ $.Values.global.https_proxy }}"
             {{- end }}
-            {{- if .Values.global.no_proxy }}
-            Environment="NO_PROXY=.svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,192.168.0.0/16,{{ .Values.global.pods.cidrBlocks }},{{ .Values.global.services.cidrBlocks }}"
+            {{- if $.Values.global.no_proxy }}
+            Environment="NO_PROXY=.svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,192.168.0.0/16,{{ $.Values.global.pods.cidrBlocks }},{{ $.Values.global.services.cidrBlocks }}"
             {{- end }}
       joinConfiguration:
         nodeRegistration:
@@ -61,3 +62,5 @@ spec:
             provider-id: {{`'openstack:///{{ instance_id }}'`}}
             node-labels: "cluster.environment=staging,ingress-ready=true"
           name: {{`'{{ local_hostname }}'`}}
+---
+{{- end }}

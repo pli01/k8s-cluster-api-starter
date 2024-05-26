@@ -2,7 +2,7 @@
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: OpenStackMachineTemplate
 metadata:
-  name: {{ .Values.global.clusterName }}-control-plane
+  name: {{ .Values.global.clusterName }}-control-plane-{{ .Values.controlplane.version }}
   namespace: default
 spec:
   template:

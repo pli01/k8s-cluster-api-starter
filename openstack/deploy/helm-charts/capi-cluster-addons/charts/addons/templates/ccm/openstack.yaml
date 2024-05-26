@@ -27,8 +27,7 @@ spec:
     secret:
       enabled: true
       name: cloud-config
-      create: true
-      # create: false
+      create: false
     extraEnv:
       {{- if .Values.global.http_proxy }}
       - name: http_proxy
@@ -43,10 +42,5 @@ spec:
       - name: no_proxy
         value: "{{ .Values.global.no_proxy }},{{`{{ ( index .Cluster.spec.clusterNetwork.pods.cidrBlocks 0 ) }}`}},{{`{{ (index .Cluster.spec.clusterNetwork.services.cidrBlocks 0 ) }}`}},.svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,16,192.168.0.0/16"
       {{- end }}
-    cloudConfig:
-      global:
-        {{- range $key, $value := .Values.cloudConfig.cloudConf.global }}
-        {{ $key }}: {{ $value }}
-        {{- end }}
   # TODO: pay attention to newlines at the end that get inserted by templates
 {{ end -}}

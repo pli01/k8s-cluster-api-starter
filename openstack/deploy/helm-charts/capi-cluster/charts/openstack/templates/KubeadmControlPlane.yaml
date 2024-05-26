@@ -259,6 +259,6 @@ spec:
     infrastructureRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
       kind: OpenStackMachineTemplate
-      name: {{ .Values.global.clusterName }}-control-plane
+      name: {{ .Values.global.clusterName }}-control-plane-{{ .Values.controlplane.version }}
   replicas: {{ .Values.controlplane.replicas | default 1 }}
-  version: {{ .Values.global.kubernetes.version }}
+  version: {{ .Values.controlplane.version }}

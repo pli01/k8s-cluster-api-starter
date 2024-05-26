@@ -24,6 +24,10 @@ spec:
     ## nginx configuration
     ## Ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/index.md
     ##
+    {{ if .Values.dockerConfig.enabled -}}
+    imagePullSecrets:
+      - name: regcred
+    {{ end -}}
     controller:
     ## nginx config
       config:

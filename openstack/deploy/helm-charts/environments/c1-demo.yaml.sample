@@ -8,8 +8,6 @@ global:
 
   # cluster
   clusterName: c1-demo
-  kubernetes:
-    version: v1.29.4
   pods:
     cidrBlocks: "172.16.0.0/16"
   services:
@@ -56,6 +54,7 @@ openstack:
     image: ubuntu22.04
     flavor: CO1.2
   controlplane:
+    version: v1.29.4
     replicas: 1
     image: ubuntu-2204-kube-v1.29.4
     flavor: CO1.2
@@ -64,12 +63,27 @@ openstack:
       - AZ2
     # IP for kube API : pre allocated IP outside cluster-api
     apiServerFixedIP: 192.168.101.10
-  worker:
-    replicas: 1
-    image: ubuntu-2204-kube-v1.29.4
-    flavor: CO1.2
-    # IP for ingress: pre allocated IP outside cluster-api
-    ingressServerFixedIP: 192.168.101.11
+  workers:
+    - name: md-0
+      version: v1.29.4
+      replicas: 1
+      image: ubuntu-2204-kube-v1.29.4
+      flavor: CO1.2
+      #failureDomain: AZ2
+      # IP for ingress: pre allocated IP outside cluster-api
+      ingressServerFixedIP: 192.168.101.11
+## Add workers node
+#    - name: md-1
+#      version: v1.29.4
+#      replicas: 1
+#      image: ubuntu-2204-kube-v1.29.4
+#      flavor: CO1.2
+#      # failureDomain: AZ2
+#      # IP for ingress: pre allocated IP outside cluster-api
+#      ingressServerFixedIP: 192.168.101.11
+  dockerConfig:
+    registry: https://index.docker.io/v1/
+    auth: __REPLACE_WITH_DOCKERHUB_AUTH_B64__
   cloudConfig:
     #
     # used by cluster api provider openstack (capo)
@@ -82,13 +96,9 @@ openstack:
     # B64 encode clouds.yaml with : `cat clouds.yaml |base64 -w0`
     #
     cloudsYaml: _OPENSTACK_CLOUD_PROVIDER_CONF_B64_
-#
-# reference to addons helm values
-#
-addons:
-  # used by ccm-openstack
-  #
-  cloudConfig:
+    #
+    # used by ccm-openstack
+    #
     cloudConf:
       global:
         ## use application credential ID/secret

@@ -25,6 +25,10 @@ spec:
   namespace: kube-system
   valuesTemplate: |
     installation:
+      {{ if .Values.dockerConfig.enabled -}}
+      imagePullSecrets:
+        - name: regcred
+      {{ end -}}
       cni:
         type: Calico
       calicoNetwork:
