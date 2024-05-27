@@ -18,7 +18,10 @@ spec:
         image: paulbouwer/hello-kubernetes:1
         ports:
         - containerPort: 8080
-#      affinity:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: "kubernetes.io/hostname"
 #        nodeAffinity:
 #          requiredDuringSchedulingIgnoredDuringExecution:
 #            nodeSelectorTerms:

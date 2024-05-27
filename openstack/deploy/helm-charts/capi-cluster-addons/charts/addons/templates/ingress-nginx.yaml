@@ -32,14 +32,19 @@ spec:
     ## nginx config
       config:
         use-forwarded-headers: "true"
-    ## with LB metallb
+    ## with LB
       publishService:
         enabled: true
       kind: "DaemonSet"
       service:
         enabled: true
         externalTrafficPolicy: Local
+        {{- if and .Values.global.addons.cni.enabled ( eq .Values.global.addons.cni.type "calico" ) }}
         loadBalancerClass: "metallb.universe.tf/metallb"
+        {{- end }}
+        {{- if and .Values.global.addons.cni.enabled ( eq .Values.global.addons.cni.type "cilium" ) }}
+        loadBalancerClass: "io.cilium/l2-announcer"
+        {{- end }}
       daemonset:
         hostPorts:
           http: 80

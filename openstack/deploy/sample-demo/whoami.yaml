@@ -18,6 +18,10 @@ spec:
         image: containous/whoami:latest
         ports:
         - containerPort: 80
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: "kubernetes.io/hostname"
 ---
 apiVersion: v1
 kind: Service

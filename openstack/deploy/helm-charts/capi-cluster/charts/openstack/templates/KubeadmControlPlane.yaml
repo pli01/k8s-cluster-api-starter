@@ -244,6 +244,11 @@ spec:
 #          extraArgs:
 #            quota-backend-bytes: "8589934592"
     initConfiguration:
+      {{ if and .Values.global.addons.cni.enabled ( eq .Values.global.addons.cni.type "cilium" ) -}}
+      # cilium replace kube-proxy
+      skipPhases:
+        - addon/kube-proxy
+      {{ end -}}
       nodeRegistration:
         kubeletExtraArgs:
           cloud-provider: external

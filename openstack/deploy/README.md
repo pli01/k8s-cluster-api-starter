@@ -373,6 +373,10 @@ The following workload cluster infrastructures have been tested in openstack clo
 
 ![existing subnet, without LBaaS, with API HA with kube-vip](docs/cluster-api-cluster-kube-vip.drawio.png)
 
-- existing subnet, with LB metallb for workload traffic, with API HA with kube-vip
+- existing subnet, with calico + LB metallb for workload traffic, with API HA with kube-vip
 
 ![existing subnet, with LB metallb for workload traffic, with API HA with kube-vip](docs/cluster-api-cluster-kube-vip-metallb.drawio.png)
+
+- existing subnet, with cilium LB for workload traffic, with API HA with kube-vip
+
+![existing subnet, with LB cilium for workload traffic, with API HA with kube-vip](docs/cluster-api-cluster-kube-vip-cilium.drawio.png)
