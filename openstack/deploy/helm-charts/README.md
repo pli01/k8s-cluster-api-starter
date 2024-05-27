@@ -12,9 +12,11 @@ Providers:
   - openstack
 
 Helmchartproxy addons:
-  - cni: calico
   - ccm: openstack
-  - metallb: lb for ingress
+  - cni: (choose on)
+    - calico
+    - cilium
+  - metallb(with calico): lb for ingress
   - ingress-nginx: ingress-nginx
 
 
@@ -23,7 +25,7 @@ Helmchartproxy addons:
 ```
 capi-cluster
   - charts/openstack
-  - metallb-config: is deployed with ClusterResourceSet
+  - ClusterResourceSet is used to deploy calico, cilium or secrets config
 capi-cluster-addons: helm charts for all addons (CNI,CCM...)
 repo: helm repo index
 ```
