@@ -2,6 +2,8 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: c2-cluster-create
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io/background
 spec:
   project: default
   destination:
@@ -12,6 +14,7 @@ spec:
   - repoURL: https://github.com/pli01/k8s-cluster-api-starter.git
     # path must contain Chart.yaml
     path: openstack/deploy/helm-charts/capi-cluster
+    targetRevision: HEAD
     helm:
       releaseName: c2-dev
       valueFiles:

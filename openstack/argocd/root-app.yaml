@@ -3,10 +3,9 @@ kind: Application
 metadata:
   name: root-app
   namespace: argocd
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
+    name: ''
     namespace: argocd
     name: in-cluster
   project: default
@@ -14,3 +13,8 @@ spec:
     path: openstack/argocd/apps
     repoURL: _GIT_URL_
     targetRevision: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      allowEmpty: true
+      selfHeal: true
