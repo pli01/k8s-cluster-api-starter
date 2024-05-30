@@ -32,6 +32,10 @@ spec:
     ## nginx config
       config:
         use-forwarded-headers: "true"
+        enable-real-ip: "true"
+        forwarded-for-header: X-Forwarded-For
+        # to get real ip from external LB
+        use-proxy-protocol: "true"
     ## with LB
       publishService:
         enabled: true
