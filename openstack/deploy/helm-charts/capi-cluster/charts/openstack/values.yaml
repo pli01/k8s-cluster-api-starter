@@ -3,6 +3,7 @@ addons:
   ccm: {}
   metallb: {}
   ingress: {}
+  certmanager: {}
 # sshkeyname: REPLACE_MY_KEY
 
 #router: router_services
@@ -29,6 +30,7 @@ addons:
 #    image: ubuntu-2204-kube-v1.29.4
 #    flavor: CO1.2
 #    ingressServerFixedIP: 192.168.101.11
+certmanager: {}
 cloudConfig:
   # b64 encoded value
   cacert:
