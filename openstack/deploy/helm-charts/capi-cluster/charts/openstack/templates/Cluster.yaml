@@ -16,6 +16,9 @@ metadata:
     ingress.enabled: {{  printf "%t" .Values.global.addons.ingress.enabled | quote }}
     ingress.type: {{ .Values.global.addons.ingress.type }}
     ingress.version: {{ .Values.global.addons.ingress.version }}
+    certmanager.enabled: {{  printf "%t" .Values.global.addons.certmanager.enabled | quote }}
+    certmanager.type: {{ .Values.global.addons.certmanager.type }}
+    certmanager.version: {{ .Values.global.addons.certmanager.version }}
 spec:
   clusterNetwork:
     pods:

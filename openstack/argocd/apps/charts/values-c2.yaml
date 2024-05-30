@@ -1,0 +1,14 @@
+cluster:
+  name: c2-dev
+  controlPlaneNodes: 1
+  controlPlaneFlavor: CO1.2
+  workerNodes: 1
+  nodeMachineFlavor: CO1.2
+  version: v1.29.4
+  apiServerIP: 192.168.101.15
+  httpProxy: http://192.168.2.10:8888
+  image: ubuntu-2204-kube-v1.29.4
+  router: router_services
+  network: network_kube
+  subnet: subnet_kube
+  cloudConfig: c2-dev

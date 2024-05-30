@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: c2-cluster-create
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io/background
+spec:
+  project: default
+  destination:
+    namespace: default
+    server: 'https://kubernetes.default.svc'
+  sources:
+  # public helm repo
+  - repoURL: https://github.com/pli01/k8s-cluster-api-starter.git
+    # path must contain Chart.yaml
+    path: openstack/deploy/helm-charts/capi-cluster
+    targetRevision: HEAD
+    helm:
+      releaseName: c2-dev
+      valueFiles:
+      # $values reference the private repo
+      - $values/openstack/argocd/environment/c2-dev.yaml
+  # private helm values repo
+  - repoURL: _GIT_URL_
+    targetRevision: argocd
+    ref: values

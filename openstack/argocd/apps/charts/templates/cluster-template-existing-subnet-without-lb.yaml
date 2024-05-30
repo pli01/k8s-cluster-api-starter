@@ -1,0 +1,279 @@
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: {{ .Values.cluster.name }}
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks: ["172.16.0.0/16"]
+    services:
+      cidrBlocks: ["10.96.0.0/12"]
+    serviceDomain: cluster.local
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    name: {{ .Values.cluster.name }}-control-plane
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: OpenStackCluster
+    name: {{ .Values.cluster.name }}
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: OpenStackMachineTemplate
+metadata:
+  name: {{ .Values.cluster.name }}-md-0
+  namespace: default
+spec:
+  template:
+    spec:
+      configDrive: true
+      flavor: {{ .Values.cluster.nodeMachineFlavor }}
+      image:
+        filter:
+          name: {{ .Values.cluster.image }}
+      sshKeyName: k8s-key
+      ports:
+        - network:
+            filter:
+              name: {{ .Values.cluster.network }}
+          fixedIPs:
+            - subnet:
+                filter:
+                  name: {{ .Values.cluster.subnet }}
+          securityGroups:
+            - filter:
+                name: k8s-cluster-default-{{ .Values.cluster.name }}-secgroup-worker
+            - filter:
+                name: allow-http
+            - filter:
+                name: allow-ssh
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: OpenStackMachineTemplate
+metadata:
+  name: {{ .Values.cluster.name }}-control-plane
+  namespace: default
+spec:
+  template:
+    spec:
+      configDrive: true
+      flavor: {{ .Values.cluster.controlPlaneFlavor }}
+      image:
+        filter:
+          name: {{ .Values.cluster.image }}
+      sshKeyName: k8s-key
+      ports:
+        - network:
+            filter:
+              name: {{ .Values.cluster.network }}
+          fixedIPs:
+            - subnet:
+                filter:
+                  name: {{ .Values.cluster.subnet }}
+              ipAddress: {{ .Values.cluster.apiServerIP }}
+          securityGroups:
+            - filter:
+                name: k8s-cluster-default-{{ .Values.cluster.name }}-secgroup-controlplane
+            - filter:
+                name: allow-ssh
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: OpenStackCluster
+metadata:
+  name: {{ .Values.cluster.name }}
+  namespace: default
+spec:
+  bastion:
+    enabled: false
+  # externalnet enable is needed by bastion
+  disableExternalNetwork: true
+  disableAPIServerFloatingIP: true
+  apiServerFixedIP: {{ .Values.cluster.apiServerIP }}
+  controlPlaneAvailabilityZones: ["AZ1","AZ2"]
+  router:
+    filter:
+      name: {{ .Values.cluster.router }}
+  network:
+    filter:
+      name: {{ .Values.cluster.network }}
+  subnets:
+    - filter:
+        name: {{ .Values.cluster.subnet }}
+  identityRef:
+    cloudName: openstack
+    name: {{ .Values.cluster.cloudConfig }}-cloud-config
+  managedSecurityGroups:
+    allowAllInClusterTraffic: true
+    allNodesSecurityGroupRules:
+      - description: Created by cluster-api-provider-openstack - BGP (calico)
+        direction: ingress
+        etherType: IPv4
+        name: BGP (Calico)
+        portRangeMax: 179
+        portRangeMin: 179
+        protocol: tcp
+        remoteManagedGroups:
+          - controlplane
+          - worker
+      - description: Created by cluster-api-provider-openstack - IP-in-IP (calico)
+        direction: ingress
+        etherType: IPv4
+        name: IP-in-IP (calico)
+        protocol: "4"
+        remoteManagedGroups:
+          - controlplane
+          - worker
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: {{ .Values.cluster.name }}-md-0
+  namespace: default
+spec:
+  clusterName: {{ .Values.cluster.name }}
+  replicas: {{ .Values.cluster.workerNodes }}
+  selector:
+    matchLabels: null
+  template:
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          name: {{ .Values.cluster.name }}-md-0
+      clusterName: {{ .Values.cluster.name }}
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: OpenStackMachineTemplate
+        name: {{ .Values.cluster.name }}-md-0
+      version: {{ .Values.cluster.version }}
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: KubeadmControlPlane
+metadata:
+  name: {{ .Values.cluster.name }}-control-plane
+  namespace: default
+spec:
+  kubeadmConfigSpec:
+    preKubeadmCommands:
+      - echo debug-pre > /tmp/out
+      - mkdir -p /etc/pre-kubeadm-commands
+      - for script in $(find /etc/pre-kubeadm-commands/ -name '*.sh' -type f | sort);
+        do echo "Running script $script"; "$script"; done
+    postKubeadmCommands:
+      - echo debug-post >> /tmp/out
+      - mkdir -p /etc/post-kubeadm-commands
+      - for script in $(find /etc/post-kubeadm-commands/ -name '*.sh' -type f | sort);
+        do echo "Running script $script"; "$script"; done
+    files:
+      - content: |
+          #!/bin/bash
+          #
+          # pre-kubadm-scripts
+          #
+          set -e
+          # apply containerd config before kubeadm
+          systemctl daemon-reload
+          systemctl restart containerd
+        owner: root:root
+        path: /etc/pre-kubeadm-commands/10-containerd-restart.sh
+        permissions: "0700"
+      - path: /etc/apt/apt.conf.d/99proxy
+        owner: "root:root"
+        permissions: "0644"
+        content: |
+          Acquire {
+            http::Proxy "{{ .Values.cluster.httpProxy }}";
+            https::Proxy "{{ .Values.cluster.httpProxy }}";
+            }
+      - path: /etc/systemd/system/containerd.service.d/http-proxy.conf
+        owner: "root:root"
+        permissions: "0644"
+        content: |
+          [Service]
+          Environment="HTTP_PROXY={{ .Values.cluster.httpProxy }}"
+          Environment="HTTPS_PROXY={{ .Values.cluster.httpProxy }}"
+          Environment="NO_PROXY=.svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,10.96.0.0/12,172.16.0.0/16,192.168.0.0/16"
+    clusterConfiguration:
+      apiServer:
+        extraArgs:
+          cloud-provider: external
+      controllerManager:
+        extraArgs:
+          cloud-provider: external
+    initConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          cloud-provider: external
+          provider-id: 'openstack:///{{ "{{" }} instance_id {{ "}}" }}'
+        name: '{{ "{{" }} local_hostname {{ "}}" }}'
+    joinConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          cloud-provider: external
+          provider-id: 'openstack:///{{ "{{" }} instance_id {{ "}}" }}'
+        name: '{{ "{{" }} local_hostname {{ "}}" }}'
+  machineTemplate:
+    infrastructureRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: OpenStackMachineTemplate
+      name: {{ .Values.cluster.name }}-control-plane
+  replicas: {{ .Values.cluster.controlPlaneNodes }}
+  version: {{ .Values.cluster.version }}
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  name: {{ .Values.cluster.name }}-md-0
+  namespace: default
+spec:
+  template:
+    spec:
+      preKubeadmCommands:
+        - echo debug-pre > /tmp/out
+        - mkdir -p /etc/pre-kubeadm-commands
+        - for script in $(find /etc/pre-kubeadm-commands/ -name '*.sh' -type f | sort);
+          do echo "Running script $script"; "$script"; done
+      postKubeadmCommands:
+        - echo debug-post >> /tmp/out
+        - mkdir -p /etc/post-kubeadm-commands
+        - for script in $(find /etc/post-kubeadm-commands/ -name '*.sh' -type f | sort);
+          do echo "Running script $script"; "$script"; done
+      files:
+        - content: |
+            #!/bin/bash
+            #
+            # pre-kubadm-scripts
+            #
+            set -e
+            # apply containerd config before kubeadm
+            systemctl daemon-reload
+            systemctl restart containerd
+          owner: root:root
+          path: /etc/pre-kubeadm-commands/10-containerd-restart.sh
+          permissions: "0700"
+        - path: /etc/apt/apt.conf.d/99proxy
+          owner: "root:root"
+          permissions: "0644"
+          content: |
+            Acquire {
+              http::Proxy "{{ .Values.cluster.httpProxy }}";
+              https::Proxy "{{ .Values.cluster.httpProxy }}";
+              }
+        - path: /etc/systemd/system/containerd.service.d/http-proxy.conf
+          owner: "root:root"
+          permissions: "0644"
+          content: |
+            [Service]
+            Environment="HTTP_PROXY={{ .Values.cluster.httpProxy }}"
+            Environment="HTTPS_PROXY={{ .Values.cluster.httpProxy }}"
+            Environment="NO_PROXY=.svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,10.96.0.0/12,172.16.0.0/16,192.168.0.0/16"
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            cloud-provider: external
+            provider-id: 'openstack:///{{ "{{" }} instance_id {{ "}}" }}'
+          name: '{{ "{{" }} local_hostname {{ "}}" }}'
+---

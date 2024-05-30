@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-app
+  namespace: argocd
+spec:
+  destination:
+    name: ''
+    namespace: argocd
+    name: in-cluster
+  project: default
+  source:
+    path: openstack/argocd/apps
+    repoURL: _GIT_URL_
+    targetRevision: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      allowEmpty: true
+      selfHeal: true
