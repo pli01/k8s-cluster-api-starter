@@ -39,9 +39,11 @@ spec:
             - ipAddress: {{ .Values.controlplane.apiServerFixedIP }}
 #          disablePortSecurity: true
 #
-#      rootVolume:
-#        sizeGiB: 10
-#        type: __DEFAULT__
+       {{- if .Values.controlplane.rootVolume }}
+      rootVolume:
+        sizeGiB: {{ .Values.controlplane.rootVolume.sizeGiB }}
+        type: {{ .Values.controlplane.rootVolume.type }}
+      {{- end }}
 #      additionalBlockDevices:
 #        - name: etcd     ## Add etcd external volume
 #          sizeGiB: 10

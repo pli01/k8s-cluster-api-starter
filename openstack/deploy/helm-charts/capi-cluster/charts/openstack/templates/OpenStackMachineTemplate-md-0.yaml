@@ -40,5 +40,11 @@ spec:
                 name: allow-ssh
           allowedAddressPairs:
             - ipAddress: {{ $worker.ingressServerFixedIP }}
+      {{- if $worker.rootVolume }}
+      rootVolume:
+        sizeGiB: {{ $worker.rootVolume.sizeGiB }}
+        type: {{ $worker.rootVolume.type }}
+      {{- end }}
+
 ---
 {{- end }}
