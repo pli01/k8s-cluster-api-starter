@@ -19,6 +19,7 @@ Helmchartproxy addons:
   - metallb (with calico): LB for ingress
   - ingress-nginx
   - cert-manager
+  - local-path-provisioner (helm index from rancher)
 
 
 ## directory structures

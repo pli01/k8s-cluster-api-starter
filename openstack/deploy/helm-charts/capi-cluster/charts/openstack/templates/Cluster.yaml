@@ -29,6 +29,12 @@ metadata:
     certmanager.type: {{ .Values.global.addons.certmanager.type }}
     certmanager.version: {{ .Values.global.addons.certmanager.version }}
     {{ end -}}
+    {{ if .Values.global.addons.storagelocal.enabled -}}
+    storagelocal.enabled: {{  printf "%t" .Values.global.addons.storagelocal.enabled | quote }}
+    storagelocal.type: {{ .Values.global.addons.storagelocal.type }}
+    storagelocal.version: {{ .Values.global.addons.storagelocal.version }}
+    {{ end -}}
+
     #
 spec:
   clusterNetwork:

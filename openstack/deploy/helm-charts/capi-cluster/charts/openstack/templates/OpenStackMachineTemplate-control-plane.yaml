@@ -39,7 +39,7 @@ spec:
             - ipAddress: {{ .Values.controlplane.apiServerFixedIP }}
 #          disablePortSecurity: true
 #
-       {{- if .Values.controlplane.rootVolume }}
+      {{- if .Values.controlplane.rootVolume }}
       rootVolume:
         sizeGiB: {{ .Values.controlplane.rootVolume.sizeGiB }}
         type: {{ .Values.controlplane.rootVolume.type }}
