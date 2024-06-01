@@ -15,9 +15,11 @@ Helmchartproxy addons:
   - ccm: openstack
   - cni: (choose on)
     - calico
-    - cilium
-  - metallb(with calico): lb for ingress
-  - ingress-nginx: ingress-nginx
+    - cilium (include LB)
+  - metallb (with calico): LB for ingress
+  - ingress-nginx
+  - cert-manager
+  - local-path-provisioner (helm index from rancher)
 
 
 ## directory structures
@@ -68,6 +70,7 @@ kubectl get cluster -A
 # see clusterresourceset
 kubectl get ClusterResourceSet -A
 kubectl get configmap -A
+kubectl get secrets -A
 
 # On workload cluster, verify metallb config is deployed
 kubectl --kubeconfig=${CLUSTER_NAME}.kubeconfig get L2Advertisement,ipaddresspool -A

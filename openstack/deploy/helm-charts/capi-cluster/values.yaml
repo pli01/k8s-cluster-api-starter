@@ -64,6 +64,7 @@ openstack:
       - AZ2
     # reserved ip/port outside cluster-api
     apiServerFixedIP: 192.168.101.10
+    #rootVolume: {}
   workers:
     - name: md-0
       version: v1.29.4
@@ -72,6 +73,7 @@ openstack:
       flavor: CO1.2
       # reserved ip/port outside cluster-api
       ingressServerFixedIP: 192.168.101.11
+      #rootVolume: {}
 #
 # openstack cloud config
 #

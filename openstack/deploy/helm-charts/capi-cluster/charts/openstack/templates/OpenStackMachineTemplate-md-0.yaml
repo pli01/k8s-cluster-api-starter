@@ -40,5 +40,19 @@ spec:
                 name: allow-ssh
           allowedAddressPairs:
             - ipAddress: {{ $worker.ingressServerFixedIP }}
+      {{- if $worker.rootVolume }}
+      rootVolume:
+        sizeGiB: {{ $worker.rootVolume.sizeGiB }}
+        type: {{ $worker.rootVolume.type }}
+      {{- end }}
+      {{- if $worker.additionalBlockDevices }}
+      additionalBlockDevices:
+        - name: {{ $worker.additionalBlockDevices.name }}
+          sizeGiB: {{ $worker.additionalBlockDevices.sizeGiB }}
+          storage:
+            type: Volume
+            volume:
+              type: {{ $worker.additionalBlockDevices.type }}
+      {{- end }}
 ---
 {{- end }}

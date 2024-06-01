@@ -49,9 +49,20 @@ kind: Ingress
 metadata:
   name: hello-ingress
   annotations:
-    ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    #cert-manager.io/cluster-issuer: "letsencrypt-production"
+    ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     # IP White list
     # nginx.ingress.kubernetes.io/whitelist-source-range: x.x.x.x/32,y.y.y.y/32
+    # Deny list
+    # nginx.ingress.kubernetes.io/denylist-source-range: x.x.x.x/8
+    # Enable basic auth
+    # nginx.ingress.kubernetes.io/auth-type: basic
+    # nginx.ingress.kubernetes.io/auth-secret: ingress-nginx/basic-auth
+    # nginx.ingress.kubernetes.io/auth-secret-type: auth-file
+    # nginx.ingress.kubernetes.io/auth-realm: "Progress Authentication"
 spec:
   ingressClassName: nginx
   rules:
@@ -65,3 +76,7 @@ spec:
             port:
               number: 8080
 #   host: hello.MYDOMAIN.ORG
+#  tls:
+#  - hosts:
+#    - hello.MYDOMAIN.ORG
+#    secretName: tls-hello.MYDOMAIN.ORG

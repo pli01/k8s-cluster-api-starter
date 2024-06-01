@@ -6,6 +6,25 @@ metadata:
 spec:
   template:
     spec:
+      {{- if $worker.additionalBlockDevices }}
+      ##  Add external volume
+      diskSetup:
+         partitions:
+         - device: /dev/vdb
+           layout: true
+           overwrite: false
+           tableType: gpt
+         filesystems:
+         - device: /dev/vdb
+           extraOpts:
+           - -E
+           - lazy_itable_init=1,lazy_journal_init=1
+           filesystem: ext4
+           label: {{ $worker.additionalBlockDevices.name }}_disk
+      mounts:
+        - - LABEL={{ $worker.additionalBlockDevices.name }}_disk
+          - /mnt/disk
+      {{- end }}
       preKubeadmCommands:
         - echo debug-pre > /tmp/out
         - mkdir -p /etc/pre-kubeadm-commands

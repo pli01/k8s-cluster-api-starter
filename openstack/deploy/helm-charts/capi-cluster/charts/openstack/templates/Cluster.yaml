@@ -4,21 +4,38 @@ metadata:
   name: {{ .Values.global.clusterName }}
   labels:
     cluster.x-k8s.io/name: {{ .Values.global.clusterName }}
+    {{ if .Values.global.addons.cni.enabled -}}
     cni.enabled: {{ printf "%t" .Values.global.addons.cni.enabled | quote }}
     cni.type: {{ .Values.global.addons.cni.type }}
     cni.version: {{ .Values.global.addons.cni.version }}
+    {{ end -}}
+    {{ if .Values.global.addons.ccm.enabled -}}
     ccm.enabled: {{  printf "%t" .Values.global.addons.ccm.enabled | quote }}
     ccm.type: {{ .Values.global.addons.ccm.type }}
     ccm.version: {{ .Values.global.addons.ccm.version }}
+    {{ end -}}
+    {{ if .Values.global.addons.metallb.enabled -}}
     metallb.enabled: {{  printf "%t" .Values.global.addons.metallb.enabled | quote }}
     metallb.type: {{ .Values.global.addons.metallb.type }}
     metallb.version: {{ .Values.global.addons.metallb.version }}
+    {{ end -}}
+    {{ if .Values.global.addons.ingress.enabled -}}
     ingress.enabled: {{  printf "%t" .Values.global.addons.ingress.enabled | quote }}
     ingress.type: {{ .Values.global.addons.ingress.type }}
     ingress.version: {{ .Values.global.addons.ingress.version }}
+    {{ end -}}
+    {{ if .Values.global.addons.certmanager.enabled -}}
     certmanager.enabled: {{  printf "%t" .Values.global.addons.certmanager.enabled | quote }}
     certmanager.type: {{ .Values.global.addons.certmanager.type }}
     certmanager.version: {{ .Values.global.addons.certmanager.version }}
+    {{ end -}}
+    {{ if .Values.global.addons.storagelocal.enabled -}}
+    storagelocal.enabled: {{  printf "%t" .Values.global.addons.storagelocal.enabled | quote }}
+    storagelocal.type: {{ .Values.global.addons.storagelocal.type }}
+    storagelocal.version: {{ .Values.global.addons.storagelocal.version }}
+    {{ end -}}
+
+    #
 spec:
   clusterNetwork:
     pods:

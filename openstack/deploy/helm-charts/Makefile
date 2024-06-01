@@ -1,9 +1,27 @@
+HELM_VALUE = ""
+CLUSTER_NAME = ""
+
 index: package-capi-cluster \
        package-capi-cluster-addons \
+       package-local-path-provisioner \
        index-repo
 package-capi-cluster:
 	helm package capi-cluster -d repo/
 package-capi-cluster-addons:
 	helm package capi-cluster-addons -d repo/
+package-local-path-provisioner:
+	( rm -rf local-path-provisioner ; \
+          git clone https://github.com/rancher/local-path-provisioner.git --depth 1 --branch v0.0.27 ; \
+          helm package local-path-provisioner/deploy/chart/local-path-provisioner -d repo/ ; \
+          rm -rf local-path-provisioner )
+
 index-repo:
 	helm repo index repo/
+
+SHELL := /bin/bash
+check-template:
+	[[ -n "${HELM_VALUE}" && -n "${CLUSTER_NAME}" ]] || exit 1
+template-capi-cluster: check-template
+	helm template -f ${HELM_VALUE} ${CLUSTER_NAME} capi-cluster
+template-capi-cluster-addons: check-template
+	helm template -f ${HELM_VALUE} ${CLUSTER_NAME} capi-cluster-addons
