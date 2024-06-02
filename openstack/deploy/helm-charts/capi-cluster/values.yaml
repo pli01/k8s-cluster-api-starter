@@ -41,6 +41,11 @@ global:
       #enabled: false
       type: cert-manager
       version: v1.14.5
+    csi:
+      enabled: true
+      #enabled: false
+      type: cinder-csi
+      version: 2.30.0
 
 #
 # reference to openstack helm values

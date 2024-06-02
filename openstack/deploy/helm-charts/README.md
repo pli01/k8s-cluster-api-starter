@@ -12,14 +12,15 @@ Providers:
   - openstack
 
 Helmchartproxy addons:
-  - ccm: openstack
+  - ccm: openstack-cloud-controller-manager
   - cni: (choose on)
     - calico
     - cilium (include LB)
   - metallb (with calico): LB for ingress
   - ingress-nginx
   - cert-manager
-  - local-path-provisioner (helm index from rancher)
+  - local-path-provisioner (use helm index in this repo from rancher)
+  - csi: openstack-cinder-csi (use a patch version to use extraEnv)
 
 
 ## directory structures
@@ -29,7 +30,7 @@ capi-cluster
   - charts/openstack
   - ClusterResourceSet is used to deploy calico, cilium or secrets config
 capi-cluster-addons: helm charts for all addons (CNI,CCM...)
-repo: helm repo index
+repo: helm repo index (make index to generate , don t forget to commit index and tgz file)
 ```
 
 ## Use it

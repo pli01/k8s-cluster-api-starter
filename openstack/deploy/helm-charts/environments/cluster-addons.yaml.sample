@@ -32,6 +32,16 @@ global:
       #enabled: false
       type: cert-manager
       version: v1.14.5
+    storagelocal:
+      enabled: true
+      #enabled: false
+      type: storagelocal
+      version: 0.0.25
+    csi:
+      enabled: true
+      #enabled: false
+      type: cinder-csi
+      version: 2.30.0
 
 # reference to addons helm values
 #

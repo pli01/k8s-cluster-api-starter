@@ -34,7 +34,11 @@ metadata:
     storagelocal.type: {{ .Values.global.addons.storagelocal.type }}
     storagelocal.version: {{ .Values.global.addons.storagelocal.version }}
     {{ end -}}
-
+    {{ if .Values.global.addons.csi.enabled -}}
+    csi.enabled: {{ printf "%t" .Values.global.addons.csi.enabled | quote }}
+    csi.type: {{ .Values.global.addons.csi.type }}
+    csi.version: {{ .Values.global.addons.csi.version }}
+    {{ end -}}
     #
 spec:
   clusterNetwork:
