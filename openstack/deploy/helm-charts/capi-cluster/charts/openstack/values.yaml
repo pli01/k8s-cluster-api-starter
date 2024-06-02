@@ -4,6 +4,7 @@ addons:
   metallb: {}
   ingress: {}
   certmanager: {}
+  csi: {}
 # sshkeyname: REPLACE_MY_KEY
 
 #router: router_services

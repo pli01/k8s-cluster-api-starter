@@ -35,6 +35,12 @@ global:
       enabled: false
       type: storagelocal
       version: 2.0.0
+    csi:
+      #enabled: true
+      enabled: false
+      type: cinder-csi
+      version: 2.30.0
+
 #
 # openstack cloud config
 #
