@@ -32,6 +32,7 @@ addons:
 #    flavor: CO1.2
 #    ingressServerFixedIP: 192.168.101.11
 certmanager: {}
+csi: {}
 cloudConfig:
   # b64 encoded value
   cacert:

@@ -139,17 +139,5 @@ spec:
 
     storageClass:
       enabled: true
-      custom: |-
-        ---
-        apiVersion: storage.k8s.io/v1
-        kind: StorageClass
-        metadata:
-          name: cinder-default
-        provisioner: cinder.csi.openstack.org
-        volumeBindingMode: WaitForFirstConsumer
-        allowVolumeExpansion: false
-        parameters:
-          type: __DEFAULT__
-          availability: nova
   # TODO: pay attention to newlines at the end that get inserted by templates
 {{ end -}}

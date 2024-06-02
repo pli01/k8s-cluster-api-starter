@@ -55,13 +55,13 @@ global:
       type: cert-manager
       version: v1.14.5
     storagelocal:
-      enabled: true
-      #enabled: false
+      #enabled: true
+      enabled: false
       type: storagelocal
       version: 0.0.25
     csi:
-      enabled: true
-      #enabled: false
+      #enabled: true
+      enabled: false
       type: cinder-csi
       version: 2.30.0
 
@@ -124,6 +124,19 @@ openstack:
 #        name: data
 #        sizeGiB: 30
 #        type: __DEFAULT__
+
+#  csi:
+#    storageClass:
+#    - metadata:
+#        name: cinder-default
+#      spec:
+#        provisioner: cinder.csi.openstack.org
+#        volumeBindingMode: WaitForFirstConsumer
+#        allowVolumeExpansion: false
+#        parameters:
+#          type: __DEFAULT__
+#          availability: nova
+#
 
   certmanager:
     clusterIssuers:
