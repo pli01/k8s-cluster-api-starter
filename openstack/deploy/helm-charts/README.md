@@ -40,8 +40,8 @@ repo: helm repo index (make index to generate , don t forget to commit index and
 # Adapt and modify to your needs (image, network, replica, credentials...)
 
 export CLUSTER_NAME=c1-dev
-cat environment/c1-demo.yaml.sample > environments/${CLUSTER_NAME}.yaml
-cat environment/cluster-addons.yaml.sample > environments/cluster-addons.yaml
+cat environments/c1-demo.yaml.sample > environments/${CLUSTER_NAME}.yaml
+cat environments/cluster-addons.yaml.sample > environments/cluster-addons.yaml
 
 # install helm addons
 helm upgrade --install -f environments/cluster-addons.yaml helm-addons ./capi-cluster-addons  --wait
