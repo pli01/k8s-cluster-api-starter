@@ -20,10 +20,18 @@ In this example, we use predefined resources
  - workload cluster will be deployed in existing subnet
 
 We use following components:
+On Mgmt Cluster:
 - cluster-api
 - cluster-api-provider-openstack
+- cluster-api-addons-provider-helm
+- capi2argo cluster operator
+- argocd + ingress-nginx (install your own to postconfigure workload cluster)
+
+On workload cluster:
 - kube-vip
-- metallb
+- cilium
+- or calico and  metallb
+- cert-manager
 - ingress-nginx
 
 # prepare mgmt instance
@@ -86,6 +94,11 @@ clusterctl init --infrastructure openstack --addon helm
 - configure capo pod (cluster api provider openstack) and caaph (Cluster API Add-on Provider Helm) to contact openstack API with `http_proxy` env
 ```
 bash configure_capo.sh
+```
+
+- install capi2argo operator to dynamically convert Workload cluster credentials into mgmt Argo Cluster
+```
+bash install_capi2argo.sh
 ```
 
 # Create workload configuration
