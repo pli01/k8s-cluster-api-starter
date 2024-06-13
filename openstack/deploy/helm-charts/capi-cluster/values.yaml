@@ -51,6 +51,8 @@ global:
 # reference to openstack helm values
 #
 openstack:
+  machinehealthcheck:
+    enabled: false
   sshkeyname: REPLACE_SSH_KEY_NAME_
   router: router_services
   network: network_kube
