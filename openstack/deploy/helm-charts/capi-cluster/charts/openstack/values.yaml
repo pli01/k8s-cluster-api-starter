@@ -1,3 +1,6 @@
+machinehealthcheck:
+  enabled: false
+
 addons:
   cni: {}
   ccm: {}
