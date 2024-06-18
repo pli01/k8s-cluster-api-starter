@@ -18,6 +18,7 @@ package-local-path-provisioner:
 package-cloud-provider-openstack:
 	( rm -rf cloud-provider-openstack ; \
           git clone https://github.com/pli01/cloud-provider-openstack --depth 1 --branch add-cinder-csi-helm-extra-env ; \
+          # git clone https://github.com/kubernetes/cloud-provider-openstack --depth 1 --branch openstack-cinder-csi-2.30.1-alpha.1 ; \
           helm package cloud-provider-openstack/charts/cinder-csi-plugin -d repo/ ; \
           rm -rf cloud-provider-openstack )
 
