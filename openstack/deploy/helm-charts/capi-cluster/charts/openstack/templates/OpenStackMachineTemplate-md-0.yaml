@@ -1,9 +1,10 @@
-{{- range $worker := .Values.workers }}
+{{- $values := .Values }}
+{{- range $name, $pool := .Values.workers }}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: OpenStackMachineTemplate
 metadata:
-  name: {{ $.Values.global.clusterName }}-{{ $worker.name }}-{{ $worker.version }}
+  name: {{ $.Values.global.clusterName }}-{{ $name }}-{{ $pool.version }}
 spec:
   template:
     spec:
@@ -14,10 +15,10 @@ spec:
       serverGroup:
         filter:
           name: worker-node
-      flavor: {{ $worker.flavor }}
+      flavor: {{ $pool.flavor }}
       image:
         filter:
-          name: {{ $worker.image }}
+          name: {{ $pool.image }}
       sshKeyName: {{ $.Values.sshkeyname }}
       ports:
         - network:
@@ -39,20 +40,20 @@ spec:
             - filter:
                 name: allow-ssh
           allowedAddressPairs:
-            - ipAddress: {{ $worker.ingressServerFixedIP }}
-      {{- if $worker.rootVolume }}
+            - ipAddress: {{ $pool.ingressServerFixedIP }}
+      {{- if $pool.rootVolume }}
       rootVolume:
-        sizeGiB: {{ $worker.rootVolume.sizeGiB }}
-        type: {{ $worker.rootVolume.type }}
+        sizeGiB: {{ $pool.rootVolume.sizeGiB }}
+        type: {{ $pool.rootVolume.type }}
       {{- end }}
-      {{- if $worker.additionalBlockDevices }}
+      {{- if $pool.additionalBlockDevices }}
       additionalBlockDevices:
-        - name: {{ $worker.additionalBlockDevices.name }}
-          sizeGiB: {{ $worker.additionalBlockDevices.sizeGiB }}
+        - name: {{ $pool.additionalBlockDevices.name }}
+          sizeGiB: {{ $pool.additionalBlockDevices.sizeGiB }}
           storage:
             type: Volume
             volume:
-              type: {{ $worker.additionalBlockDevices.type }}
+              type: {{ $pool.additionalBlockDevices.type }}
       {{- end }}
 ---
 {{- end }}
