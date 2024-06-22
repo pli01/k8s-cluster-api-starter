@@ -1,0 +1,7 @@
+export OSC_IMAGE_NAME=ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+export OSC_VM_TYPE=tinav5.c2r4p1
+export OSC_KEYPAIR_NAME=_REPLACE_KEYPAIR_NAME_
+export OSC_SUBREGION_NAME=eu-west-2b
+export OSC_VOLUME_TYPE=standard
+export OSC_IOPS=100 # needed with io1 type
+export OSC_VOLUME_SIZE=30
