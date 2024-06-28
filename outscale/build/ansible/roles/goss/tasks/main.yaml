@@ -1,0 +1,12 @@
+---
+- name: "Ensure that destination folder exists"
+  ansible.builtin.file:
+    state: directory
+    path: "{{ goss_dst_dir }}"
+
+- name: "Download Goss binary from GitHub"
+  get_url:
+    url: "{{ goss_url }}"
+    dest: "{{ goss_dst_dir }}/{{ goss_bin }}"
+    checksum: "sha256:{{ goss_sha256sum }}"
+    mode: 0755

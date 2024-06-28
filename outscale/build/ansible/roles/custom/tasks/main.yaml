@@ -1,0 +1,52 @@
+#
+# custom tasks
+#
+---
+- name: Remove apt.conf.d/99proxy when http defined
+  ansible.builtin.file:
+    state: "{{ item.state }}"
+    path: "{{ item.path }}"
+  loop:
+    - { path: "/etc/apt/apt.conf.d/99proxy", state: "absent" }
+  when: http_proxy is defined or https_proxy is defined
+
+- name: Configure apt.conf
+  lineinfile:
+    create: true
+    dest: "{{ apt_conf_config_file }}"
+    owner: root
+    group: root
+    mode: 0644
+    regexp: '{{ item.key }}\s+.*'
+    line: '{{ item.key }} {{ item.value }}'
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ apt_conf }}"
+
+- name: Stop and disable unnecessary services
+  service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  with_items: "{{ unnecessary_services }}"
+  ignore_errors: yes
+
+- name: Remove undesirable packages
+  ansible.builtin.apt:
+    name: "{{ unnecessary_packages }}"
+    state: absent
+    purge: true
+
+- name: Configure /etc/default/grub.d/99-custom.cfg
+  lineinfile:
+    create: true
+    dest: "{{ grub_cfg_config_file }}"
+    owner: root
+    group: root
+    mode: 0644
+    regexp: '{{ item.key }}=.*'
+    line: '{{ item.key }}={{ item.value }}'
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ grub_cfg }}"
+
+- name: Run update-grub
+  ansible.builtin.shell: /usr/sbin/update-grub
