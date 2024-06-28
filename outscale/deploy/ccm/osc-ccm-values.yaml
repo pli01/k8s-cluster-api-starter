@@ -1,0 +1,7 @@
+---
+tolerations:
+  - key: node.cloudprovider.kubernetes.io/uninitialized
+    value: "true"
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/control-plane
+    effect: NoSchedule
