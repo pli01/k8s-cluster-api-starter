@@ -6,7 +6,8 @@ cd work
 # install kind, kubectl, helm, sops, age
 curl -L https://raw.githubusercontent.com/numerique-gouv/dk8s/main/scripts/install-prereq.sh | bash
 # install clusterctl
-curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.7.3/clusterctl-linux-amd64 -o clusterctl
+CLUSTERCTL_VERSION=v1.7.4
+curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/$CLUSTERCTL_VERSION/clusterctl-linux-amd64 -o clusterctl
 chmod +x clusterctl
 sudo mv clusterctl /usr/local/bin/clusterctl
 clusterctl version
