@@ -9,7 +9,7 @@ https_proxy="${https_proxy:? error}"
 no_proxy=".svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,10.96.0.0/12,172.16.0.0/16,192.168.0.0/16"
 
 for controller in capo caaph ; do
-echo "# create configmap proxy-config $controller
+echo "# create configmap proxy-config $controller"
 cat <<EOF_CONFIG | kubectl -n $controller-system apply -f -
 ---
 apiVersion: v1
@@ -28,7 +28,7 @@ EOF_CONFIG
 #
 # configure capo/caaph http_proxy
 #
-echo "# set env proxy-config $controller
+echo "# set env proxy-config $controller"
 kubectl set env deployment/$controller-controller-manager --namespace=$controller-system --from=configmap/proxy-config --containers='*'
 done
 fi
