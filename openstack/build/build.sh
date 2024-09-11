@@ -10,7 +10,7 @@
 
 kube_version="${1:-}"
 docker_args=" $2 "
-IMAGE_BUILDER_VERSION="${IMAGE_BUILDER_VERSION:-v0.1.27}"
+IMAGE_BUILDER_VERSION="${IMAGE_BUILDER_VERSION:-v0.1.34}"
 
 if [[ $# -gt 0 &&  "$kube_version" != "" ]]; then
   docker_args=" $docker_args  -v ./extra_vars/kube_${kube_version}.json:/data/extra_vars_kube_${kube_version}.json "
