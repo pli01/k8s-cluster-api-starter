@@ -49,12 +49,12 @@ export no_proxy=localhost,192.168.0.0/16
 curl -L https://raw.githubusercontent.com/numerique-gouv/dk8s/main/scripts/install-prereq.sh | bash
 
 # install clusterctl
-curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.7.0/clusterctl-linux-amd64 -o clusterctl
+curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.8.3/clusterctl-linux-amd64 -o clusterctl
 chmod +x clusterctl
 sudo mv clusterctl /usr/local/bin/clusterctl
 
 # install yq
-curl -LO https://github.com/mikefarah/yq/releases/download/v4.43.1/yq_linux_amd64.tar.gz
+curl -LO https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64.tar.gz
 tar -zxvf yq_linux_amd64.tar.gz  ./yq_linux_amd64
 rm -rf yq_linux_amd64.tar.gz
 chmod +x yq_linux_amd64
