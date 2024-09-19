@@ -12,6 +12,10 @@ kube_version="${1:-}"
 docker_args=" $2 "
 IMAGE_BUILDER_VERSION="${IMAGE_BUILDER_VERSION:-v0.1.34}"
 
+if [[ ! -f config/packer.json || ! -f config/packer.openstack.rc ]]; then
+	echo "No config file config/packer.json or config/packer.openstack.rc found"
+	exit 1
+fi
 if [[ $# -gt 0 &&  "$kube_version" != "" ]]; then
   docker_args=" $docker_args  -v ./extra_vars/kube_${kube_version}.json:/data/extra_vars_kube_${kube_version}.json "
   EXTRA_PACKER_VAR_FILES="/data/extra_vars_kube_${kube_version}.json"
@@ -26,8 +30,8 @@ docker_args=" $docker_args -v ./packer/openstack/:/home/imagebuilder/packer/open
 
 docker run --name "image-builder" -it --rm --net=host \
   $docker_args \
-	-v ./packer.json:/data/packer.json \
+	-v ./config/packer.json:/data/packer.json \
 	--env PACKER_VAR_FILES="/data/packer.json $EXTRA_PACKER_VAR_FILES" \
-	--env-file ./packer.openstack.rc \
+	--env-file ./config/packer.openstack.rc \
 	registry.k8s.io/scl-image-builder/cluster-node-image-builder-amd64:$IMAGE_BUILDER_VERSION \
   build-openstack-ubuntu-2204
