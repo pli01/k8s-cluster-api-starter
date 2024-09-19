@@ -83,11 +83,12 @@ cat sample-clouds.yaml |envsubst > clouds.yaml
 - configure docker (with access to pull image , http_proxy)
 - kind create (with docker)
 ```
-kind create cluster --name mgmt
+kind create cluster --name mgmt --config kind-cluster.yaml
 ```
 - wait pods ready
 - init cluster with helm support
 ```
+export CLUSTER_TOPOLOGY=true
 clusterctl init --infrastructure openstack --addon helm
 ```
 - wait pods ready
