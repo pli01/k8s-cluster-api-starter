@@ -1,12 +1,13 @@
-{{- range $worker := .Values.workers }}
+{{- $values := .Values }}
+{{- range $name, $pool := .Values.workers }}
 ---
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
 metadata:
-  name: {{ $.Values.global.clusterName }}-{{ $worker.name }}
+  name: {{ $.Values.global.clusterName }}-{{ $name }}
 spec:
   clusterName: {{ $.Values.global.clusterName }}
-  replicas: {{ $worker.replicas | default 0 }}
+  replicas: {{ $pool.replicas | default 0 }}
   selector:
     matchLabels: null
   template:
@@ -15,15 +16,15 @@ spec:
         configRef:
           apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
           kind: KubeadmConfigTemplate
-          name: {{ $.Values.global.clusterName }}-{{ $worker.name }}
+          name: {{ $.Values.global.clusterName }}-{{ $name }}
       clusterName: {{ $.Values.global.clusterName }}
-      {{- if $worker.failureDomain }}
-      failureDomain: {{ $worker.failureDomain }}
+      {{- if $pool.failureDomain }}
+      failureDomain: {{ $pool.failureDomain }}
       {{- end }}
       infrastructureRef:
         apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
         kind: OpenStackMachineTemplate
-        name: {{ $.Values.global.clusterName }}-{{ $worker.name }}-{{ $worker.version }}
-      version: {{ $worker.version }}
+        name: {{ $.Values.global.clusterName }}-{{ $name }}-{{ $pool.version }}
+      version: {{ $pool.version }}
 ---
 {{- end }}

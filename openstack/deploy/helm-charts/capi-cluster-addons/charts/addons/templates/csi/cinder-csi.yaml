@@ -18,8 +18,10 @@ spec:
       csi.version: {{ .Values.global.addons.csi.version }}
   # Target all workload clusters.
   #  matchLabels: {}
+  #releaseName: cinder-csi
+  #repoURL: https://raw.githubusercontent.com/pli01/k8s-cluster-api-starter/main/openstack/deploy/helm-charts/repo/
   releaseName: cinder-csi
-  repoURL: https://raw.githubusercontent.com/pli01/k8s-cluster-api-starter/main/openstack/deploy/helm-charts/repo/
+  repoURL: https://kubernetes.github.io/cloud-provider-openstack
   chartName: openstack-cinder-csi
   version: {{ .Values.global.addons.csi.version }}
   namespace: kube-system

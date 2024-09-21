@@ -92,7 +92,7 @@ openstack:
 #      sizeGiB: 30
 #      type: __DEFAULT__
   workers:
-    - name: md-0
+    md-0:
       version: v1.29.4
       replicas: 1
       image: ubuntu-2204-kube-v1.29.4
@@ -187,6 +187,6 @@ openstack:
       global:
         ## use application credential ID/secret
         auth-url: _OS_AUTH_URL/v3_
-        application-credential-id=_OS_APPLICATION_CREDENTIAL_ID_
-        application-credential-secret=_OS_APPLICATION_CREDENTIAL_SECRET_
+        application-credential-id: _OS_APPLICATION_CREDENTIAL_ID_
+        application-credential-secret: _OS_APPLICATION_CREDENTIAL_SECRET_
         region: "__OS_REGION_NAME_"
