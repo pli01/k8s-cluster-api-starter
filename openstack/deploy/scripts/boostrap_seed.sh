@@ -15,4 +15,4 @@ git checkout $branch
 
 # bootstrap
 cd openstack/deploy
-./scripts/install_seed_mgmt.sh
+bash ./scripts/install_seed_mgmt.sh
