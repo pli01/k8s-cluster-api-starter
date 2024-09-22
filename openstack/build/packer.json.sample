@@ -1,12 +1,12 @@
-#
-# warning: remove all comment before using it
-#  replace with your values
+# Warning: before using this file
+#   remove all comment
+#   and replace ${variables} with your values and copy file to config/ dir without .sample extension
 #
 {
   "source_image": "",                                        # use image name
   "source_image_filter_name": "ubuntu22.04",                 #   with filter_name
-  "networks": "a1f9f345-b1f8-45a5-b4f2-228c471d0071",        # id of network accessible from builder instance
-  "security_groups": "df22e412-0f85-4cdd-a54b-39a07ef8b314", # sg allow ssh
+  "networks": "${K8S_NETWORK_KUBE_ID}",                      # network id accessible from builder instance
+  "security_groups": "${K8S_SG_ALLOW_SSH_ID}",               # security group id allow ssh
   "use_floating_ip": "false",                                # disable floating ip
   "floating_ip_network": "",                                 # no external floating network
   "flavor": "CO1.2",
@@ -16,9 +16,9 @@
   "use_blockstorage_volume": "true",
   "volume_size": "10",
   "ssh_username": "cloudadm",
-  "http_proxy": "http://192.168.2.10:8888",
-  "https_proxy": "http://192.168.2.10:8888",
-  "ansible_user_vars": "http_proxy=http://192.168.2.10:8888 https_proxy=http://192.168.2.10:8888 no_proxy=localhost,192.168.0.0/16",
+  "http_proxy": "${http_proxy}",
+  "https_proxy": "${https_proxy}",
+  "ansible_user_vars": "http_proxy=${http_proxy} https_proxy=${https_proxy} no_proxy=${no_proxy}",
   "node_custom_roles_pre": "custom goss",
   "ubuntu_repo": "https://ubuntu.mirrors.ovh.net/ubuntu",
   "ubuntu_security_repo": "https://ubuntu.mirrors.ovh.net/ubuntu",
