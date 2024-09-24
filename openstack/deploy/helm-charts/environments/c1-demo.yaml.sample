@@ -19,7 +19,7 @@ global:
       enabled: true
       #enabled: false
       type: cilium
-      version: 1.15.5
+      version: 1.15.8
       #type: calico
       #version: v3.27.3
       config:
@@ -32,7 +32,17 @@ global:
       enabled: true
       #enabled: false
       type: openstack
-      version: 2.30.1
+      version: 2.31.0
+    csi:
+      enabled: true
+      #enabled: false
+      type: cinder-csi
+      version: 2.31.0
+    storagelocal:
+      enabled: true
+      #enabled: false
+      type: storagelocal
+      version: 0.0.25
     metallb:
       #enabled: true
       enabled: false
@@ -54,18 +64,6 @@ global:
       #enabled: false
       type: cert-manager
       version: v1.14.5
-    storagelocal:
-      #enabled: true
-      enabled: false
-      type: storagelocal
-      version: 0.0.25
-    csi:
-      #enabled: true
-      enabled: false
-      type: cinder-csi
-      version: 2.30.0
-
-
 #
 # reference to openstack helm values
 #
@@ -109,7 +107,7 @@ openstack:
 #        type: __DEFAULT__
 
 ## Add workers node
-#    - name: md-1
+#    md-1:
 #      version: v1.29.4
 #      replicas: 1
 #      image: ubuntu-2204-kube-v1.29.4
