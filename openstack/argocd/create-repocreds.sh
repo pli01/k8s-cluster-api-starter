@@ -5,12 +5,13 @@
 
 GIT_URL="${GIT_URL:?GIT_URL}"
 GIT_USERNAME="${GIT_USERNAME:?GIT_USERNAME}"
-GIT_PASSWORD="${GIT_USERNAME:?GIT_PASSWORD}"
-http_proxy="${http_proxy:?http_proxy}"
-B64_GIT_URL=$(echo -n "$GIT_URL" | base64 -w0)
-B64_GIT_USERNAME=$(echo -n "$GIT_USERNAME" | base64 -w0)
-B64_GIT_PASSWORD=$(echo -n "$GIT_PASSWORD" | base64 -w0)
-B64_HTTP_PROXY=$(echo -n "$http_proxy" | base64 -w0)
+GIT_PASSWORD="${GIT_PASSWORD:?GIT_PASSWORD}"
+http_proxy="${http_proxy:-}"
+B64_GIT_URL=$(echo -n "$GIT_URL" | openssl base64 -A)
+B64_GIT_USERNAME=$(echo -n "$GIT_USERNAME" | openssl base64 -A)
+B64_GIT_PASSWORD=$(echo -n "$GIT_PASSWORD" | openssl base64 -A)
+GIT_NAME=$(echo $GIT_URL |sed -e 's|.*//||g; s|/|-|g;s|\.|-|g')
+[[ -n "$http_proxy" ]] && exportB64_HTTP_PROXY=$(echo -n "$http_proxy" | openssl base64 -A)
 
 cat <<EOF
 apiVersion: v1
@@ -21,12 +22,12 @@ metadata:
     managed-by: argocd.argoproj.io
   labels:
     argocd.argoproj.io/secret-type: repo-creds
-  name: git-repo-infra-template
+  name: $GIT_NAME
   namespace: argocd
 data:
   # url pattern
   url: $B64_GIT_URL
   username: $B64_GIT_USERNAME
   password: $B64_GIT_PASSWORD
-  proxy: $B64_HTTP_PROXY
 EOF
+[[ -n "$http_proxy" ]] && echo "  proxy: $B64_HTTP_PROXY"
