@@ -1,12 +1,22 @@
 # cluster-api helm chart
 
-Helm charts to install Cluster API manifests.
+Helm charts to manages the lifecycle of a Kubernetes clusters on different cloud using Cluster API.
 
-Currently the chart install:
-- target cluster for Openstack
-It is planned to include support for other cluster API providers.
-- In addition, it is possible to install in each clusters, additional components in the form
- of helm charts such as CNI, CCM, Ingress, and
+Currently, the following charts are available:
+| Chart | Description |
+| --- | --- |
+| [capi-cluster-addons](./capi-cluster-addons) | Deploys addons into a Kubernetes cluster, e.g. CCM, CNI, CSI. |
+| [capi-cluster](./capi-cluster) | Deploys a Kubernetes cluster on a cloud. (Openstack,...) |
+
+Currently the capi-cluster chart install:
+- workload target cluster on Openstack cloud
+It is planned to include support for other cluster API providers. (outscale)
+
+In addition, it is possible to install in each clusters, additional components (addons) in the form of helm charts such as CNI, CCM, CSI ..
+
+Addons are managed using custom resources provided by Cluster API Addon Provider. 
+
+the following are required for a functional cluster: CCM, CNI
 
 Providers:
   - openstack
@@ -16,20 +26,20 @@ Helmchartproxy addons:
   - cni: (choose on)
     - calico
     - cilium (include LB)
+  - csi: openstack-cinder-csi (use a patch version to use extraEnv)
   - metallb (with calico): LB for ingress
   - ingress-nginx
   - cert-manager
   - local-path-provisioner (use helm index in this repo from rancher)
-  - csi: openstack-cinder-csi (use a patch version to use extraEnv)
 
 
 ## directory structures
 
 ```
-capi-cluster
+capi-cluster/
   - charts/openstack
-  - ClusterResourceSet is used to deploy calico, cilium or secrets config
-capi-cluster-addons: helm charts for all addons (CNI,CCM...)
+  - charts/openstac/ClusterResourceSet is used to deploy calico, cilium or secrets config
+capi-cluster-addons/: helm charts for all addons (CNI,CCM...)
 repo: helm repo index (make index to generate , don t forget to commit index and tgz file)
 ```
 
