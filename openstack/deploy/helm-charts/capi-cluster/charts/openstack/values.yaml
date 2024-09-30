@@ -30,6 +30,10 @@ addons:
 #  serverGroup:
 #    filter:
 #      name: worker-node
+#  serverMetadata:
+#    - key: ingress-ready
+#      value: "true"
+#
 #workers:
 #  - name: md-0
 #    version: v1.29.4

@@ -9,9 +9,9 @@ spec:
   template:
     spec:
       configDrive: true
-      serverMetadata:
-        - key: ingress-ready
-          value: "true"
+    {{- with $pool.serverMetadata }}
+      serverMetadata: {{- toYaml . | nindent 8 }}
+    {{- end }}
     {{- with $pool.serverGroup }}
       serverGroup: {{- toYaml . | nindent 8 }}
     {{- end }}
