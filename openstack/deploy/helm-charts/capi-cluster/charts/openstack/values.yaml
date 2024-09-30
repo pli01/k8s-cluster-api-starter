@@ -27,6 +27,13 @@ addons:
 #  availabilityZones:
 #    - AZ1
 #    - AZ2
+#  serverGroup:
+#    filter:
+#      name: worker-node
+#  serverMetadata:
+#    - key: ingress-ready
+#      value: "true"
+#
 #workers:
 #  - name: md-0
 #    version: v1.29.4
@@ -34,6 +41,11 @@ addons:
 #    image: ubuntu-2204-kube-v1.29.4
 #    flavor: CO1.2
 #    ingressServerFixedIP: 192.168.101.11
+#    failureDomain: AZ1
+#    serverGroup:
+#      filter:
+#        name: worker-node
+
 certmanager: {}
 csi: {}
 cloudConfig:

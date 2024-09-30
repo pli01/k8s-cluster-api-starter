@@ -8,9 +8,9 @@ spec:
   template:
     spec:
       configDrive: true
-      serverGroup:
-        filter:
-          name: worker-node
+    {{- with $.Values.controlplane.serverGroup }}
+      serverGroup: {{- toYaml . | nindent 8 }}
+    {{- end }}
       flavor: {{ .Values.controlplane.flavor }}
       image:
         filter:

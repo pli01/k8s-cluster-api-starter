@@ -9,12 +9,12 @@ spec:
   template:
     spec:
       configDrive: true
-      serverMetadata:
-        - key: ingress-ready
-          value: "true"
-      serverGroup:
-        filter:
-          name: worker-node
+    {{- with $pool.serverMetadata }}
+      serverMetadata: {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with $pool.serverGroup }}
+      serverGroup: {{- toYaml . | nindent 8 }}
+    {{- end }}
       flavor: {{ $pool.flavor }}
       image:
         filter:
