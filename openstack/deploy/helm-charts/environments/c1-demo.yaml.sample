@@ -78,6 +78,9 @@ openstack:
     flavor: CO1.2
   controlplane:
     version: v1.29.4
+    serverGroup:
+      filter:
+         name: "controlplane-node"
     replicas: 1
     image: ubuntu-2204-kube-v1.29.4
     flavor: CO1.2
@@ -91,6 +94,9 @@ openstack:
 #      type: __DEFAULT__
   workers:
     md-0:
+      serverGroup:
+        filter:
+           name: "worker-node"
       version: v1.29.4
       replicas: 1
       image: ubuntu-2204-kube-v1.29.4
