@@ -94,6 +94,9 @@ openstack:
 #      type: __DEFAULT__
   workers:
     md-0:
+      nodeLabels:
+        cluster.environment: staging
+        ingress-ready: true
       serverGroup:
         filter:
            name: "worker-node"
