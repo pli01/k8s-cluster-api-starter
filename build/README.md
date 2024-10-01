@@ -21,16 +21,16 @@ The easiest way to build kubernetes image is:
 - use the new image in cluster-api workload config file
 
 Quick steps is:
-- prepare and copy packer.json and packer.openstack.rc into config/ directory
+- prepare and copy packer.PROVIDER.json and packer.PROVIDER.rc into config/ directory
 - build target image with `build.sh $KUBERNETES_VERSION` (image os is based on ubuntu2204)
 - image is uploaded in image registry (glance in openstack): ubuntu-2204-kube-v1.30.4
-- when image is builded, set min-disk size to 10g: `openstack image set  ubuntu-2204-kube-v1.30.4  --min-disk 10`
+- For openstack: when image is builded, set min-disk size to 10g: `openstack image set  ubuntu-2204-kube-v1.30.4  --min-disk 10`
 
 # build cloud images
 
-- prepare and copy packer.json and packer.openstack.rc into config/ directory
-  - packer.json: contains specific network, security group id, flavor, volume type....
-  - packer.openstack.rc: contains specific credentials to your env
+- prepare and copy packer.PROVIDER.json and packer.PROVIDER.rc into config/ directory
+  - packer.PROVIDER.json: contains specific network, security group id, flavor, volume type....
+  - packer.PROVIDER.rc: contains specific credentials to your env
 
 - build image
 
@@ -41,20 +41,24 @@ Quick steps is:
 in this example, we build kubernetes 1.30.4 version
 
 ```
-build.sh  130.4
+# For openstack
+build.sh openstack 130.4
+# For outscale
+build.sh outscale 130.4
 ```
 
 ```
 # sample extra options if needed
 # ex1: run packer/ansible in debug mode (confirm each step)
-build.sh  130.4 "--env DEBUG=1"
+build.sh openstack 130.4 "--env DEBUG=1"
 # ex2: add extra host ro resolve host entry
-build.sh  130.4 "--add-host identity.openstack.local:10.1.1.1"
+build.sh openstack 130.4 "--add-host identity.openstack.local:10.1.1.1"
 ```
 
-.... Wait 10/15mn and list the fresh openstack image ...
+.... Wait 10/15mn and list the fresh image ...
 
 ```
+# for openstack
 openstack image show ubuntu-2204-kube-v1.30.4
 ```
 
@@ -80,7 +84,7 @@ openstack image show ubuntu-2204-kube-v1.30.4
 # run.sh
 run.sh : contains the docker command line and argument to run image builder with all files included
 in the container, run, the following command
-make build-openstack-ubuntu-2204
+make build-PROVIDER-ubuntu-2204
 ```
 
 ## To develop
