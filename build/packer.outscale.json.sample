@@ -1,0 +1,8 @@
+{
+  "image_name": "Ubuntu-22.04-2023.12.04-0",
+  "image_visibility": "private",
+  "vm_type": "tinav5.c2r4p2",
+  "node_custom_roles_pre": "custom",
+  "ubuntu_repo": "https://ubuntu.mirrors.ovh.net/ubuntu",
+  "ubuntu_security_repo": "https://ubuntu.mirrors.ovh.net/ubuntu"
+}
