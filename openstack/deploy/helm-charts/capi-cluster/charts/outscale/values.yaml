@@ -1,0 +1,21 @@
+machinehealthcheck:
+  enabled: false
+
+addons:
+  cni: {}
+  ccm: {}
+  metallb: {}
+  ingress: {}
+  certmanager: {}
+  csi: {}
+# sshkeyname: REPLACE_MY_KEY
+
+certmanager: {}
+csi: {}
+#
+# outscale
+osc_credentials: {}
+#osc_credentials:
+#  secret_key: ""
+#  access_key: ""
+#  region: ""

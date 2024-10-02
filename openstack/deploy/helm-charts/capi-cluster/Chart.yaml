@@ -9,3 +9,7 @@ dependencies:
     version: 1.0.0
     repository: 'file://charts/openstack'
     condition: provider.openstack
+  - name: outscale
+    version: 1.0.0
+    repository: 'file://charts/outscale'
+    condition: provider.outscale

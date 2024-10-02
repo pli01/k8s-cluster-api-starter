@@ -1,5 +1,6 @@
 provider:
   openstack: false
+  outscale: false
 
 global:
   # clusterName: cluster1-dev
@@ -99,3 +100,12 @@ openstack: {}
 ##    # used by cluster api provider openstack (capo)
 ##    cacert: _REPLACE_WITH_B64ENCODED_CACERT_
 ##    cloudsYaml: _REPLACE_WITH_B64_cloud.yaml_
+#
+#
+# reference to outscale helm values
+#
+outscale: {}
+#osc_credentials:
+#  secret_key: ""
+#  access_key: ""
+#  region: ""
