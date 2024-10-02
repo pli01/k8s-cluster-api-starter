@@ -33,6 +33,8 @@ global:
       #enabled: false
       type: openstack
       version: 2.31.0
+      #type: outscale
+      #version: 0.3.0
     csi:
       enabled: true
       #enabled: false
