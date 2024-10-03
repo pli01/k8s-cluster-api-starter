@@ -1,0 +1,215 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: {{ .Values.global.clusterName }}
+  labels:
+    cluster.x-k8s.io/name: {{ .Values.global.clusterName }}
+    {{ if .Values.global.addons.cni.enabled -}}
+    cni.enabled: {{ printf "%t" .Values.global.addons.cni.enabled | quote }}
+    cni.type: {{ .Values.global.addons.cni.type }}
+    cni.version: {{ .Values.global.addons.cni.version }}
+    {{ end -}}
+    {{ if .Values.global.addons.ccm.enabled -}}
+    ccm.enabled: {{  printf "%t" .Values.global.addons.ccm.enabled | quote }}
+    ccm.type: {{ .Values.global.addons.ccm.type }}
+    ccm.version: {{ .Values.global.addons.ccm.version }}
+    {{ end -}}
+    {{ if .Values.global.addons.metallb.enabled -}}
+    metallb.enabled: {{  printf "%t" .Values.global.addons.metallb.enabled | quote }}
+    metallb.type: {{ .Values.global.addons.metallb.type }}
+    metallb.version: {{ .Values.global.addons.metallb.version }}
+    {{ end -}}
+    {{ if .Values.global.addons.ingress.enabled -}}
+    ingress.enabled: {{  printf "%t" .Values.global.addons.ingress.enabled | quote }}
+    ingress.type: {{ .Values.global.addons.ingress.type }}
+    ingress.version: {{ .Values.global.addons.ingress.version }}
+    {{ end -}}
+    {{ if .Values.global.addons.certmanager.enabled -}}
+    certmanager.enabled: {{  printf "%t" .Values.global.addons.certmanager.enabled | quote }}
+    certmanager.type: {{ .Values.global.addons.certmanager.type }}
+    certmanager.version: {{ .Values.global.addons.certmanager.version }}
+    {{ end -}}
+    {{ if .Values.global.addons.storagelocal.enabled -}}
+    storagelocal.enabled: {{  printf "%t" .Values.global.addons.storagelocal.enabled | quote }}
+    storagelocal.type: {{ .Values.global.addons.storagelocal.type }}
+    storagelocal.version: {{ .Values.global.addons.storagelocal.version }}
+    {{ end -}}
+    {{ if .Values.global.addons.csi.enabled -}}
+    csi.enabled: {{ printf "%t" .Values.global.addons.csi.enabled | quote }}
+    csi.type: {{ .Values.global.addons.csi.type }}
+    csi.version: {{ .Values.global.addons.csi.version }}
+    {{ end -}}
+    #
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - {{ .Values.global.pods.cidrBlocks | default "172.16.0.0/16" }}
+    services:
+      cidrBlocks:
+        - {{ .Values.global.services.cidrBlocks | default "10.96.0.0/12" }}
+    serviceDomain: cluster.local
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    name: {{ .Values.global.clusterName }}-control-plane
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: OscCluster
+    name: {{ .Values.global.clusterName }}
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: OscCluster
+metadata:
+  name: {{ .Values.global.clusterName }}
+spec:
+  network:
+    bastion:
+      clusterName: {{ .Values.global.clusterName }}
+      enable: false
+    clusterName: {{ .Values.global.clusterName }}
+    internetService:
+      clusterName: {{ .Values.global.clusterName }}
+    loadBalancer:
+      clusterName: {{ .Values.global.clusterName }}
+      loadbalancername: {{ .Values.global.clusterName }}-k8s
+      loadbalancertype: internet-facing
+    natService:
+      clusterName: {{ .Values.global.clusterName }}
+    net:
+      clusterName: {{ .Values.global.clusterName }}
+    subregionName: eu-west-2b
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: {{ .Values.global.clusterName }}
+spec:
+  clusterName: {{ .Values.global.clusterName }}
+  replicas: 1
+  selector:
+    matchLabels: null
+  template:
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          name: {{ .Values.global.clusterName }}-md-0
+      clusterName: {{ .Values.global.clusterName }}
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: OscMachineTemplate
+        name: {{ .Values.global.clusterName }}-md-0
+      version: v1.29.1
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: OscMachineTemplate
+metadata:
+  name: {{ .Values.global.clusterName }}-md-0
+spec:
+  template:
+    spec:
+      node:
+        clusterName: {{ .Values.global.clusterName }}
+        image:
+          name: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+        keypair:
+          name: {{ .Values.sshkeyname }}
+          deleteKeypair: false
+        vm:
+          clusterName: {{ .Values.global.clusterName }}
+          keypairName: {{ .Values.sshkeyname }}
+          rootDisk:
+            rootDiskIops: 100
+            rootDiskSize: 30
+            rootDiskType: standard
+          subregionName: eu-west-2b
+          vmType: tinav5.c2r4p3
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: OscMachineTemplate
+metadata:
+  name: {{ .Values.global.clusterName }}-control-plane
+spec:
+  template:
+    spec:
+      node:
+        clusterName: {{ .Values.global.clusterName }}
+        image:
+          name: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+        keypair:
+          name: {{ .Values.sshkeyname }}
+          deleteKeypair: false
+        vm:
+          clusterName: {{ .Values.global.clusterName }}
+          keypairName: {{ .Values.sshkeyname }}
+          loadBalancerName: {{ .Values.global.clusterName }}-k8s
+          role: controlplane
+          rootDisk:
+            rootDiskIops: 100
+            rootDiskSize: 30
+            rootDiskType: standard
+          subregionName: eu-west-2b
+          vmType: tinav5.c2r4p3
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  name: {{ .Values.global.clusterName }}-md-0
+spec:
+  template:
+    spec:
+      files:
+      - content: |
+          #!/bin/sh
+          curl https://github.com/opencontainers/runc/releases/download/v1.1.1/runc.amd64 -Lo /tmp/runc.amd64
+          chmod +x /tmp/runc.amd64
+          cp -f /tmp/runc.amd64 /usr/local/sbin/runc
+        owner: root:root
+        path: /tmp/set_runc.sh
+        permissions: "0744"
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            cloud-provider: external
+            provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
+          name: {{`'{{ ds.meta_data.local_hostname }}'`}}
+      preKubeadmCommands:
+      - sh /tmp/set_runc.sh
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: KubeadmControlPlane
+metadata:
+  name: {{ .Values.global.clusterName }}-control-plane
+spec:
+  kubeadmConfigSpec:
+    files:
+    - content: |
+        #!/bin/sh
+        curl https://github.com/opencontainers/runc/releases/download/v1.1.1/runc.amd64 -Lo /tmp/runc.amd64
+        chmod +x /tmp/runc.amd64
+        cp -f /tmp/runc.amd64 /usr/local/sbin/runc
+      owner: root:root
+      path: /tmp/set_runc.sh
+      permissions: "0744"
+    initConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          cloud-provider: external
+          provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
+        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
+    joinConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          cloud-provider: external
+          provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
+    preKubeadmCommands:
+    - sh /tmp/set_runc.sh
+  machineTemplate:
+    infrastructureRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: OscMachineTemplate
+      name: {{ .Values.global.clusterName }}-control-plane
+  replicas: 1
+  version: v1.29.1

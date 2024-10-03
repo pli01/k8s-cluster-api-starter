@@ -105,7 +105,8 @@ openstack: {}
 # reference to outscale helm values
 #
 outscale: {}
-#osc_credentials:
-#  secret_key: ""
-#  access_key: ""
-#  region: ""
+#  sshkeyname: REPLACE_SSH_KEY_NAME_
+#  osc_credentials:
+#    secret_key: ""
+#    access_key: ""
+#    region: ""
