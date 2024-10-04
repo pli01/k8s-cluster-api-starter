@@ -73,12 +73,13 @@ spec:
     loadBalancer:
       clusterName: {{ .Values.global.clusterName }}
       loadbalancername: {{ .Values.global.clusterName }}-k8s
-      loadbalancertype: internet-facing
     natService:
       clusterName: {{ .Values.global.clusterName }}
     net:
       clusterName: {{ .Values.global.clusterName }}
-    subregionName: eu-west-2b
+    {{- if hasKey .Values "subregionName" }}
+    subregionName: {{ .Values.subregionName  }}
+    {{- end }}
 ---
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
@@ -113,7 +114,7 @@ spec:
       node:
         clusterName: {{ .Values.global.clusterName }}
         image:
-          name: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+          name: {{ .Values.image }}
         keypair:
           name: {{ .Values.sshkeyname }}
           deleteKeypair: false
@@ -124,8 +125,10 @@ spec:
             rootDiskIops: 100
             rootDiskSize: 30
             rootDiskType: standard
-          subregionName: eu-west-2b
-          vmType: tinav5.c2r4p3
+          {{- if hasKey .Values "subregionName" }}
+          subregionName: {{ .Values.subregionName  }}
+          {{- end }}
+          vmType: {{ .Values.vmType }}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: OscMachineTemplate
@@ -137,7 +140,7 @@ spec:
       node:
         clusterName: {{ .Values.global.clusterName }}
         image:
-          name: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+          name: {{ .Values.image }}
         keypair:
           name: {{ .Values.sshkeyname }}
           deleteKeypair: false
@@ -150,8 +153,10 @@ spec:
             rootDiskIops: 100
             rootDiskSize: 30
             rootDiskType: standard
-          subregionName: eu-west-2b
-          vmType: tinav5.c2r4p3
+          {{- if hasKey .Values "subregionName" }}
+          subregionName: {{ .Values.subregionName  }}
+          {{- end }}
+          vmType: {{ .Values.vmType }}
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
 kind: KubeadmConfigTemplate
