@@ -19,7 +19,7 @@ spec:
   # Target all workload clusters.
   #  matchLabels: {}
   releaseName: outscale-ccm
-  repoURL: oci://registry-1.docker.io/outscalehelm/osc-cloud-controller-manager
+  repoURL: oci://registry-1.docker.io/outscalehelm/
   chartName: osc-cloud-controller-manager
   version: {{ .Values.global.addons.ccm.version }}
   namespace: kube-system
