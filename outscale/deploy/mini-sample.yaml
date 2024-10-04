@@ -1,0 +1,171 @@
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: osc-c1-dev
+  labels:
+    cni.enabled: "true"
+    cni.type: cilium
+    cni.version: 1.15.8
+    ccm.enabled: "true"
+    ccm.type: outscale
+    ccm.version: 0.3.0
+    storagelocal.enabled: "true"
+    storagelocal.type: storagelocal
+    storagelocal.version: 0.0.25
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 10.42.0.0/16
+    services:
+      cidrBlocks:
+      - 10.96.0.0/12
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    name: osc-c1-dev-control-plane
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: OscCluster
+    name: osc-c1-dev
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: OscCluster
+metadata:
+  name: osc-c1-dev
+spec:
+  network:
+    bastion:
+      enable: false
+    loadBalancer:
+      loadbalancername: osc-c1-dev-k8s-a
+
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  name: osc-c1-dev-md-0
+spec:
+  template:
+    spec:
+      files:
+      - content: |
+          #!/bin/sh
+          curl https://github.com/opencontainers/runc/releases/download/v1.1.1/runc.amd64 -Lo /tmp/runc.amd64
+          chmod +x /tmp/runc.amd64
+          cp -f /tmp/runc.amd64 /usr/local/sbin/runc
+        owner: root:root
+        path: /tmp/set_runc.sh
+        permissions: "0744"
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            cloud-provider: external
+            provider-id: 'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'
+          name: '{{ ds.meta_data.local_hostname }}'
+      preKubeadmCommands:
+        - sh /tmp/set_runc.sh
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: KubeadmControlPlane
+metadata:
+  name: osc-c1-dev-control-plane
+spec:
+  kubeadmConfigSpec:
+    files:
+    - content: |
+        #!/bin/sh
+        curl https://github.com/opencontainers/runc/releases/download/v1.1.1/runc.amd64 -Lo /tmp/runc.amd64
+        chmod +x /tmp/runc.amd64
+        cp -f /tmp/runc.amd64 /usr/local/sbin/runc
+      owner: root:root
+      path: /tmp/set_runc.sh
+      permissions: "0744"
+    initConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          cloud-provider: external
+          provider-id: 'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'
+        name: '{{ ds.meta_data.local_hostname }}'
+    joinConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          cloud-provider: external
+          provider-id: 'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'
+    preKubeadmCommands:
+      - sh /tmp/set_runc.sh
+  machineTemplate:
+    infrastructureRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: OscMachineTemplate
+      name: osc-c1-dev-control-plane
+  replicas: 1
+  version: v1.29.1
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: OscMachineTemplate
+metadata:
+  name: osc-c1-dev-md-0
+spec:
+  template:
+    spec:
+      node:
+        image:
+          name: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+        keypair:
+          name: k8s-infra
+          deleteKeypair: false
+        vm:
+          keypairName: k8s-infra
+          rootDisk:
+            rootDiskIops: 100
+            rootDiskSize: 30
+            rootDiskType: standard
+          vmType: tinav5.c2r4p2
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: OscMachineTemplate
+metadata:
+  name: osc-c1-dev-control-plane
+spec:
+  template:
+    spec:
+      node:
+        image:
+          name: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+        keypair:
+          name: k8s-infra
+          deleteKeypair: false
+        vm:
+          keypairName: k8s-infra
+          loadBalancerName: osc-c1-dev-k8s-a
+          role: controlplane
+          rootDisk:
+            rootDiskIops: 100
+            rootDiskSize: 30
+            rootDiskType: standard
+          vmType: tinav5.c2r4p2
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: osc-c1-dev
+spec:
+  clusterName: osc-c1-dev
+  replicas: 1
+  selector:
+    matchLabels:
+  template:
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          name: osc-c1-dev-md-0
+      clusterName: osc-c1-dev
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: OscMachineTemplate
+        name: osc-c1-dev-md-0
+      version: v1.29.1
