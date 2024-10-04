@@ -105,8 +105,12 @@ openstack: {}
 # reference to outscale helm values
 #
 outscale: {}
-#  sshkeyname: REPLACE_SSH_KEY_NAME_
-#  osc_credentials:
-#    secret_key: ""
-#    access_key: ""
-#    region: ""
+#   sshkeyname: REPLACE_SSH_KEY_NAME_
+#   subregionName: "eu-west-2a"
+#   vmType: tinav5.c2r4p3
+#   image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+#
+#   osc_credentials:
+#     secret_key: ""
+#     access_key: ""
+#     region: ""

@@ -43,6 +43,7 @@ global:
 
 outscale:
   sshkeyname: REPLACE_SSH_KEY_NAME_
+  subregionname: eu-west-2a
   osc_credentials:
     secret_key: ""
     access_key: ""

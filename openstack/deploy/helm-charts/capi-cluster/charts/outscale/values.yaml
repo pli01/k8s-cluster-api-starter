@@ -8,12 +8,18 @@ addons:
   ingress: {}
   certmanager: {}
   csi: {}
-# sshkeyname: REPLACE_MY_KEY
 
 certmanager: {}
 csi: {}
 #
 # outscale
+# sshkeyname: REPLACE_MY_KEY
+# subregionName: "eu-west-2a"
+vmType: tinav5.c2r4p3
+image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+#
+# credentials for ccm
+#
 osc_credentials: {}
 #osc_credentials:
 #  secret_key: ""
