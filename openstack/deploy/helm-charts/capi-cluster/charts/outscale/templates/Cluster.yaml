@@ -62,42 +62,236 @@ apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: OscCluster
 metadata:
   name: {{ .Values.global.clusterName }}
+  labels:
+    cluster.x-k8s.io/cluster-name: {{ .Values.global.clusterName }}
 spec:
   network:
     bastion:
-      # clusterName: {{ .Values.global.clusterName }}
       enable: false
-    loadBalancer:
-      loadbalancername: {{ .Values.global.clusterName }}-k8s
-    {{- if hasKey .Values "debug" }}
-      clusterName: {{ .Values.global.clusterName }}
-    clusterName: {{ .Values.global.clusterName }}
     internetService:
-      clusterName: {{ .Values.global.clusterName }}
+      name: {{ .Values.global.clusterName }}-internetservice
+    loadBalancer:
+      healthCheck:
+        checkinterval: 5
+        healthythreshold: 5
+        port: 6443
+        protocol: TCP
+        timeout: 5
+        unhealthythreshold: 2
+      listener:
+        backendport: 6443
+        backendprotocol: TCP
+        loadbalancerport: 6443
+        loadbalancerprotocol: TCP
+      loadbalancername: {{ .Values.global.clusterName }}-k8s
+      loadbalancertype: internet-facing
+      securitygroupname: {{ .Values.global.clusterName }}-securitygroup-lb
+      subnetname: {{ .Values.global.clusterName }}-subnet-public
     natService:
-      clusterName: {{ .Values.global.clusterName }}
+      name: {{ .Values.global.clusterName }}-natservice
+      publicipname: {{ .Values.global.clusterName }}-publicip-nat
+      subnetname: {{ .Values.global.clusterName }}-subnet-public
     net:
-      clusterName: {{ .Values.global.clusterName }}
-    {{- end }}
-    {{- if hasKey .Values "subregionName" }}
-    subregionName: {{ .Values.subregionName  }}
-    {{- end }}
+      ipRange: 10.0.0.0/16
+      name: {{ .Values.global.clusterName }}-net
+    publicIps:
+    - name: {{ .Values.global.clusterName }}-publicip-nat
+    routeTables:
+    - name: {{ .Values.global.clusterName }}-routetable-kw
+      routes:
+      - destination: 0.0.0.0/0
+        name: {{ .Values.global.clusterName }}-route-kw
+        targetName: {{ .Values.global.clusterName }}-natservice
+        targetType: nat
+      subnets:
+      - {{ .Values.global.clusterName }}-subnet-kw
+    - name: {{ .Values.global.clusterName }}-routetable-kcp
+      routes:
+      - destination: 0.0.0.0/0
+        name: {{ .Values.global.clusterName }}-route-kcp
+        targetName: {{ .Values.global.clusterName }}-natservice
+        targetType: nat
+      subnets:
+      - {{ .Values.global.clusterName }}-subnet-kcp
+    - name: {{ .Values.global.clusterName }}-routetable-public
+      routes:
+      - destination: 0.0.0.0/0
+        name: {{ .Values.global.clusterName }}-route-public
+        targetName: {{ .Values.global.clusterName }}-internetservice
+        targetType: gateway
+      subnets:
+      - {{ .Values.global.clusterName }}-subnet-public
+    securityGroups:
+    - description: Security Group Kw with {{ .Values.global.clusterName }}
+      name: {{ .Values.global.clusterName }}-securitygroup-kw
+      securityGroupRules:
+      - flow: Inbound
+        fromPortRange: 179
+        ipProtocol: tcp
+        ipRange: 10.0.0.0/16
+        name: {{ .Values.global.clusterName }}-securitygrouprule-kw-bgp
+        toPortRange: 179
+      - flow: Inbound
+        fromPortRange: 10250
+        ipProtocol: tcp
+        ipRange: 10.0.3.0/24
+        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kubelet-kw
+        toPortRange: 10250
+      - flow: Inbound
+        fromPortRange: 30000
+        ipProtocol: tcp
+        ipRange: 10.0.4.0/24
+        name: {{ .Values.global.clusterName }}-securitygrouprule-kw-nodeip-kcp
+        toPortRange: 32767
+      - flow: Inbound
+        fromPortRange: 10250
+        ipProtocol: tcp
+        ipRange: 10.0.4.0/24
+        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kubelet-kcp
+        toPortRange: 10250
+      - flow: Inbound
+        fromPortRange: 30000
+        ipProtocol: tcp
+        ipRange: 10.0.3.0/24
+        name: {{ .Values.global.clusterName }}-securitygrouprule-kw-nodeip-kw
+        toPortRange: 32767
+    - description: Security Group Kcp with {{ .Values.global.clusterName }}
+      name: {{ .Values.global.clusterName }}-securitygroup-kcp
+      securityGroupRules:
+      - flow: Inbound
+        fromPortRange: 179
+        ipProtocol: tcp
+        ipRange: 10.0.0.0/16
+        name: {{ .Values.global.clusterName }}-securitygrouprule-kcp-bgp
+        toPortRange: 179
+      - flow: Inbound
+        fromPortRange: 6443
+        ipProtocol: tcp
+        ipRange: 10.0.3.0/24
+        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kw
+        toPortRange: 6443
+      - flow: Inbound
+        fromPortRange: 6443
+        ipProtocol: tcp
+        ipRange: 10.0.4.0/24
+        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kcp
+        toPortRange: 6443
+      - flow: Inbound
+        fromPortRange: 30000
+        ipProtocol: tcp
+        ipRange: 10.0.3.0/24
+        name: {{ .Values.global.clusterName }}-securitygrouprule-kcp-nodeip-kw
+        toPortRange: 32767
+      - flow: Inbound
+        fromPortRange: 2378
+        ipProtocol: tcp
+        ipRange: 10.0.4.0/24
+        name: {{ .Values.global.clusterName }}-securitygrouprule-etcd
+        toPortRange: 2379
+      - flow: Inbound
+        fromPortRange: 10250
+        ipProtocol: tcp
+        ipRange: 10.0.4.0/24
+        name: {{ .Values.global.clusterName }}-securitygrouprule-kubelet-kcp
+        toPortRange: 10252
+      - flow: Inbound
+        fromPortRange: 30000
+        ipProtocol: tcp
+        ipRange: 10.0.4.0/24
+        name: {{ .Values.global.clusterName }}-securitugrouprule-kcp-nodeip-kcp
+        toPortRange: 32767
+    - description: Security Group Lb with {{ .Values.global.clusterName }}
+      name: {{ .Values.global.clusterName }}-securitygroup-lb
+      securityGroupRules:
+      - flow: Inbound
+        fromPortRange: 6443
+        ipProtocol: tcp
+        ipRange: 0.0.0.0/0
+        name: {{ .Values.global.clusterName }}-securitygrouprule-lb
+        toPortRange: 6443
+    - description: Security Group Node with {{ .Values.global.clusterName }}
+      name: {{ .Values.global.clusterName }}-securitygroup-node
+      securityGroupRules:
+      - flow: Inbound
+        fromPortRange: 4789
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+        name: {{ .Values.global.clusterName }}-securitygroup-calico-vxlan
+        toPortRange: 4789
+      - flow: Inbound
+        fromPortRange: 5473
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+        name: {{ .Values.global.clusterName }}-securitygroup-typha
+        toPortRange: 5473
+      - flow: Inbound
+        fromPortRange: 51820
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+        name: {{ .Values.global.clusterName }}-securitygroup-wireguard
+        toPortRange: 51820
+      - flow: Inbound
+        fromPortRange: 51821
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+        name: {{ .Values.global.clusterName }}-securitygroup-wireguard-ipv6
+        toPortRange: 51821
+      - flow: Inbound
+        fromPortRange: 4789
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+        name: {{ .Values.global.clusterName }}-securitygroup-flannel
+        toPortRange: 4789
+      - flow: Inbound
+        fromPortRange: 8285
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+        name: {{ .Values.global.clusterName }}-securitygroup-flannel-udp
+        toPortRange: 8285
+      - flow: Inbound
+        fromPortRange: 8472
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+        name: {{ .Values.global.clusterName }}-securityrgroup-flannel-vxlan
+        toPortRange: 8472
+      tag: OscK8sMainSG
+    subnets:
+    - ipSubnetRange: 10.0.4.0/24
+      name: {{ .Values.global.clusterName }}-subnet-kcp
+      subregionName: {{ .Values.subregionName  }}
+    - ipSubnetRange: 10.0.3.0/24
+      name: {{ .Values.global.clusterName }}-subnet-kw
+      subregionName: {{ .Values.subregionName  }}
+    - ipSubnetRange: 10.0.2.0/24
+      name: {{ .Values.global.clusterName }}-subnet-public
+      subregionName: {{ .Values.subregionName  }}
 ---
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
 metadata:
   name: {{ .Values.global.clusterName }}
   labels:
-    cluster.x-k8s.io/name: {{ .Values.global.clusterName }}
+    cluster.x-k8s.io/cluster-name: {{ .Values.global.clusterName }}
 spec:
   clusterName: {{ .Values.global.clusterName }}
+  minReadySeconds: 0
+  progressDeadlineSeconds: 600
   replicas: 1
+  revisionHistoryLimit: 1
   selector:
-    matchLabels: null
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: {{ .Values.global.clusterName }}
+      cluster.x-k8s.io/deployment-name: {{ .Values.global.clusterName }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
   template:
     metadata:
       labels:
         cluster.x-k8s.io/name: {{ .Values.global.clusterName }}
+        cluster.x-k8s.io/deployment-name: {{ .Values.global.clusterName }}
     spec:
       bootstrap:
         configRef:
@@ -119,22 +313,17 @@ spec:
   template:
     spec:
       node:
-        # clusterName: {{ .Values.global.clusterName }}
         image:
           name: {{ .Values.image }}
         keypair:
           name: {{ .Values.sshkeyname }}
           deleteKeypair: false
         vm:
-          # clusterName: {{ .Values.global.clusterName }}
           keypairName: {{ .Values.sshkeyname }}
           rootDisk:
             rootDiskIops: 100
             rootDiskSize: 30
             rootDiskType: standard
-          {{- if hasKey .Values "subregionName" }}
-          subregionName: {{ .Values.subregionName  }}
-          {{- end }}
           vmType: {{ .Values.vmType }}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
@@ -145,14 +334,12 @@ spec:
   template:
     spec:
       node:
-        #clusterName: {{ .Values.global.clusterName }}
         image:
           name: {{ .Values.image }}
         keypair:
           name: {{ .Values.sshkeyname }}
           deleteKeypair: false
         vm:
-          #clusterName: {{ .Values.global.clusterName }}
           keypairName: {{ .Values.sshkeyname }}
           loadBalancerName: {{ .Values.global.clusterName }}-k8s
           role: controlplane
@@ -160,9 +347,6 @@ spec:
             rootDiskIops: 100
             rootDiskSize: 30
             rootDiskType: standard
-          {{- if hasKey .Values "subregionName" }}
-          subregionName: {{ .Values.subregionName  }}
-          {{- end }}
           vmType: {{ .Values.vmType }}
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
@@ -181,8 +365,10 @@ spec:
         owner: root:root
         path: /tmp/set_runc.sh
         permissions: "0744"
+      format: cloud-config
       joinConfiguration:
         nodeRegistration:
+          imagePullPolicy: IfNotPresent
           kubeletExtraArgs:
             cloud-provider: external
             provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
@@ -194,6 +380,8 @@ apiVersion: controlplane.cluster.x-k8s.io/v1beta1
 kind: KubeadmControlPlane
 metadata:
   name: {{ .Values.global.clusterName }}-control-plane
+  labels:
+    cluster.x-k8s.io/cluster-name: {{ .Values.global.clusterName }}
 spec:
   kubeadmConfigSpec:
     files:
@@ -205,14 +393,17 @@ spec:
       owner: root:root
       path: /tmp/set_runc.sh
       permissions: "0744"
+    format: cloud-config
     initConfiguration:
       nodeRegistration:
+        imagePullPolicy: IfNotPresent
         kubeletExtraArgs:
           cloud-provider: external
           provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
         name: {{`'{{ ds.meta_data.local_hostname }}'`}}
     joinConfiguration:
       nodeRegistration:
+        imagePullPolicy: IfNotPresent
         kubeletExtraArgs:
           cloud-provider: external
           provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
@@ -224,4 +415,8 @@ spec:
       kind: OscMachineTemplate
       name: {{ .Values.global.clusterName }}-control-plane
   replicas: 1
+  rolloutStrategy:
+    rollingUpdate:
+      maxSurge: 1
+    type: RollingUpdate
   version: v1.29.1
