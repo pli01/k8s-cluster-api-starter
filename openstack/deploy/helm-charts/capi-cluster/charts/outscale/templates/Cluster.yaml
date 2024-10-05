@@ -48,7 +48,7 @@ spec:
     services:
       cidrBlocks:
         - {{ .Values.global.services.cidrBlocks | default "10.96.0.0/12" }}
-    serviceDomain: cluster.local
+     #serviceDomain: cluster.local
   controlPlaneRef:
     apiVersion: controlplane.cluster.x-k8s.io/v1beta1
     kind: KubeadmControlPlane
@@ -64,22 +64,176 @@ metadata:
   name: {{ .Values.global.clusterName }}
 spec:
   network:
-    bastion:
-      clusterName: {{ .Values.global.clusterName }}
-      enable: false
     clusterName: {{ .Values.global.clusterName }}
+    bastion:
+      enable: false
+      clusterName: {{ .Values.global.clusterName }}
     internetService:
       clusterName: {{ .Values.global.clusterName }}
     loadBalancer:
       clusterName: {{ .Values.global.clusterName }}
+      healthCheck:
+        checkinterval: 5
+        healthythreshold: 5
+        port: 6443
+        protocol: TCP
+        timeout: 5
+        unhealthythreshold: 2
+      listener:
+        backendport: 6443
+        backendprotocol: TCP
+        loadbalancerport: 6443
+        loadbalancerprotocol: TCP
       loadbalancername: {{ .Values.global.clusterName }}-k8s
+      loadbalancertype: internet-facing
     natService:
       clusterName: {{ .Values.global.clusterName }}
     net:
       clusterName: {{ .Values.global.clusterName }}
-    {{- if hasKey .Values "subregionName" }}
-    subregionName: {{ .Values.subregionName  }}
-    {{- end }}
+#    securityGroups:
+#    - description: Security Group Kw with {{ .Values.global.clusterName }}
+#      name: {{ .Values.global.clusterName }}-securitygroup-kw
+#      securityGroupRules:
+#      - flow: Inbound
+#        fromPortRange: 179
+#        ipProtocol: tcp
+#        ipRange: 10.0.0.0/16
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-kw-bgp
+#        toPortRange: 179
+#      - flow: Inbound
+#        fromPortRange: 10250
+#        ipProtocol: tcp
+#        ipRange: 10.0.3.0/24
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kubelet-kw
+#        toPortRange: 10250
+#      - flow: Inbound
+#        fromPortRange: 30000
+#        ipProtocol: tcp
+#        ipRange: 10.0.4.0/24
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-kw-nodeip-kcp
+#        toPortRange: 32767
+#      - flow: Inbound
+#        fromPortRange: 10250
+#        ipProtocol: tcp
+#        ipRange: 10.0.4.0/24
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kubelet-kcp
+#        toPortRange: 10250
+#      - flow: Inbound
+#        fromPortRange: 30000
+#        ipProtocol: tcp
+#        ipRange: 10.0.3.0/24
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-kw-nodeip-kw
+#        toPortRange: 32767
+#    - description: Security Group Kcp with {{ .Values.global.clusterName }}
+#      name: {{ .Values.global.clusterName }}-securitygroup-kcp
+#      securityGroupRules:
+#      - flow: Inbound
+#        fromPortRange: 179
+#        ipProtocol: tcp
+#        ipRange: 10.0.0.0/16
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-kcp-bgp
+#        toPortRange: 179
+#      - flow: Inbound
+#        fromPortRange: 6443
+#        ipProtocol: tcp
+#        ipRange: 10.0.3.0/24
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kw
+#        toPortRange: 6443
+#      - flow: Inbound
+#        fromPortRange: 6443
+#        ipProtocol: tcp
+#        ipRange: 10.0.4.0/24
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kcp
+#        toPortRange: 6443
+#      - flow: Inbound
+#        fromPortRange: 30000
+#        ipProtocol: tcp
+#        ipRange: 10.0.3.0/24
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-kcp-nodeip-kw
+#        toPortRange: 32767
+#      - flow: Inbound
+#        fromPortRange: 2378
+#        ipProtocol: tcp
+#        ipRange: 10.0.4.0/24
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-etcd
+#        toPortRange: 2379
+#      - flow: Inbound
+#        fromPortRange: 10250
+#        ipProtocol: tcp
+#        ipRange: 10.0.4.0/24
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-kubelet-kcp
+#        toPortRange: 10252
+#      - flow: Inbound
+#        fromPortRange: 30000
+#        ipProtocol: tcp
+#        ipRange: 10.0.4.0/24
+#        name: {{ .Values.global.clusterName }}-securitugrouprule-kcp-nodeip-kcp
+#        toPortRange: 32767
+#    - description: Security Group Lb with {{ .Values.global.clusterName }}
+#      name: {{ .Values.global.clusterName }}-securitygroup-lb
+#      securityGroupRules:
+#      - flow: Inbound
+#        fromPortRange: 6443
+#        ipProtocol: tcp
+#        ipRange: 0.0.0.0/0
+#        name: {{ .Values.global.clusterName }}-securitygrouprule-lb
+#        toPortRange: 6443
+#    - description: Security Group Node with {{ .Values.global.clusterName }}
+#      name: {{ .Values.global.clusterName }}-securitygroup-node
+#      securityGroupRules:
+#      - flow: Inbound
+#        fromPortRange: 4789
+#        ipProtocol: udp
+#        ipRange: 10.0.0.0/16
+#        name: {{ .Values.global.clusterName }}-securitygroup-calico-vxlan
+#        toPortRange: 4789
+#      - flow: Inbound
+#        fromPortRange: 5473
+#        ipProtocol: udp
+#        ipRange: 10.0.0.0/16
+#        name: {{ .Values.global.clusterName }}-securitygroup-typha
+#        toPortRange: 5473
+#      - flow: Inbound
+#        fromPortRange: 51820
+#        ipProtocol: udp
+#        ipRange: 10.0.0.0/16
+#        name: {{ .Values.global.clusterName }}-securitygroup-wireguard
+#        toPortRange: 51820
+#      - flow: Inbound
+#        fromPortRange: 51821
+#        ipProtocol: udp
+#        ipRange: 10.0.0.0/16
+#        name: {{ .Values.global.clusterName }}-securitygroup-wireguard-ipv6
+#        toPortRange: 51821
+#      - flow: Inbound
+#        fromPortRange: 4789
+#        ipProtocol: udp
+#        ipRange: 10.0.0.0/16
+#        name: {{ .Values.global.clusterName }}-securitygroup-flannel
+#        toPortRange: 4789
+#      - flow: Inbound
+#        fromPortRange: 8285
+#        ipProtocol: udp
+#        ipRange: 10.0.0.0/16
+#        name: {{ .Values.global.clusterName }}-securitygroup-flannel-udp
+#        toPortRange: 8285
+#      - flow: Inbound
+#        fromPortRange: 8472
+#        ipProtocol: udp
+#        ipRange: 10.0.0.0/16
+#        name: {{ .Values.global.clusterName }}-securityrgroup-flannel-vxlan
+#        toPortRange: 8472
+#      tag: OscK8sMainSG
+#    subnets:
+#    - ipSubnetRange: 10.0.4.0/24
+#      name: {{ .Values.global.clusterName }}-subnet-kcp
+#      subregionName: {{ .Values.subregionName  }}
+#    - ipSubnetRange: 10.0.3.0/24
+#      name: {{ .Values.global.clusterName }}-subnet-kw
+#      subregionName: {{ .Values.subregionName  }}
+#    - ipSubnetRange: 10.0.2.0/24
+#      name: {{ .Values.global.clusterName }}-subnet-public
+#      subregionName: {{ .Values.subregionName  }}
 ---
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
@@ -87,9 +241,17 @@ metadata:
   name: {{ .Values.global.clusterName }}
 spec:
   clusterName: {{ .Values.global.clusterName }}
+  minReadySeconds: 0
+  progressDeadlineSeconds: 600
   replicas: 1
+  revisionHistoryLimit: 1
   selector:
     matchLabels: null
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
   template:
     spec:
       bootstrap:
@@ -102,7 +264,7 @@ spec:
         apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
         kind: OscMachineTemplate
         name: {{ .Values.global.clusterName }}-md-0
-      version: v1.29.1
+      version: v1.29.5
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: OscMachineTemplate
@@ -125,9 +287,6 @@ spec:
             rootDiskIops: 100
             rootDiskSize: 30
             rootDiskType: standard
-          {{- if hasKey .Values "subregionName" }}
-          subregionName: {{ .Values.subregionName  }}
-          {{- end }}
           vmType: {{ .Values.vmType }}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
@@ -153,9 +312,6 @@ spec:
             rootDiskIops: 100
             rootDiskSize: 30
             rootDiskType: standard
-          {{- if hasKey .Values "subregionName" }}
-          subregionName: {{ .Values.subregionName  }}
-          {{- end }}
           vmType: {{ .Values.vmType }}
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
@@ -176,6 +332,7 @@ spec:
         permissions: "0744"
       joinConfiguration:
         nodeRegistration:
+          imagePullPolicy: IfNotPresent
           kubeletExtraArgs:
             cloud-provider: external
             provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
@@ -189,32 +346,92 @@ metadata:
   name: {{ .Values.global.clusterName }}-control-plane
 spec:
   kubeadmConfigSpec:
+    preKubeadmCommands:
+      - echo debug-pre > /tmp/out
+      - mkdir -p /etc/pre-kubeadm-commands
+      - for script in $(find /etc/pre-kubeadm-commands/ -name '*.sh' -type f | sort);
+        do echo "Running script $script"; "$script"; done
+    postKubeadmCommands:
+      - echo debug-post >> /tmp/out
+      - mkdir -p /etc/post-kubeadm-commands
+      - for script in $(find /etc/post-kubeadm-commands/ -name '*.sh' -type f | sort);
+        do echo "Running script $script"; "$script"; done
     files:
+    - content: |
+        #!/bin/bash
+        grep '^      limits:' /etc/kubernetes/manifests/kube-apiserver.yaml >/dev/null 2>&1 && exit 0
+        MEM=$(free -m | grep '^Mem:' | awk '{print $2;}')
+        CPU=$(grep '^processor' /proc/cpuinfo | wc -l)
+        sed -i "/^ *requests:/i\      limits:\n        memory: $((10+3*$MEM/4))M\n        cpu: $((750*$CPU))m" /etc/kubernetes/manifests/kube-apiserver.yaml
+        sed -i "/^ *requests:/a\        memory: 512M" /etc/kubernetes/manifests/kube-apiserver.yaml
+        sync
+        systemctl restart kubelet
+      owner: root:root
+      path: /etc/post-kubeadm-commands/10-tweak-kubeapi-memlimit.sh
+      permissions: "0700"
     - content: |
         #!/bin/sh
         curl https://github.com/opencontainers/runc/releases/download/v1.1.1/runc.amd64 -Lo /tmp/runc.amd64
         chmod +x /tmp/runc.amd64
         cp -f /tmp/runc.amd64 /usr/local/sbin/runc
       owner: root:root
-      path: /tmp/set_runc.sh
+      path: /etc/pre-kubeadm-commands/10-set_runc.sh
       permissions: "0744"
+    - content: |
+        #!/bin/bash
+        set +e
+        # Define the retry function
+        wait_and_retry() {
+          local retries="$1"
+          local wait="$2"
+          local command="$3"
+
+          $command
+          local exit_code=$?
+
+          if [[ $exit_code -ne 0 && $retries -gt 0 ]]; then
+            echo "# Wait $wait before retrying $retries"
+            sleep $wait
+            wait_and_retry $(($retries - 1)) $wait "$command"
+          else
+            return $exit_code
+          fi
+        }
+        endpoint=$(grep "controlPlaneEndpoint" /run/kubeadm/kubeadm.yaml|awk ' {print $2 }' |sed -e 's/ //g;s/:.*//g')
+
+        wait_and_retry 360 10 "host $endpoint"
+      owner: root:root
+      path: /etc/pre-kubeadm-commands/00-wait_endpoint.sh
+      permissions: "0755"
+#    clusterConfiguration:
+#      apiServer:
+#        extraArgs:
+#          cloud-provider: external
+#      controllerManager:
+#        extraArgs:
+#          cloud-provider: external
     initConfiguration:
       nodeRegistration:
+        imagePullPolicy: IfNotPresent
         kubeletExtraArgs:
           cloud-provider: external
           provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
         name: {{`'{{ ds.meta_data.local_hostname }}'`}}
     joinConfiguration:
       nodeRegistration:
+        imagePullPolicy: IfNotPresent
         kubeletExtraArgs:
           cloud-provider: external
           provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
-    preKubeadmCommands:
-    - sh /tmp/set_runc.sh
+    verbosity: 10
   machineTemplate:
     infrastructureRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
       kind: OscMachineTemplate
       name: {{ .Values.global.clusterName }}-control-plane
   replicas: 1
-  version: v1.29.1
+  rolloutStrategy:
+    rollingUpdate:
+      maxSurge: 1
+    type: RollingUpdate
+  version: v1.29.5
