@@ -48,7 +48,7 @@ spec:
     services:
       cidrBlocks:
         - {{ .Values.global.services.cidrBlocks | default "10.96.0.0/12" }}
-    serviceDomain: cluster.local
+     #serviceDomain: cluster.local
   controlPlaneRef:
     apiVersion: controlplane.cluster.x-k8s.io/v1beta1
     kind: KubeadmControlPlane
@@ -67,16 +67,18 @@ spec:
     bastion:
       clusterName: {{ .Values.global.clusterName }}
       enable: false
+    loadBalancer:
+      loadbalancername: {{ .Values.global.clusterName }}-k8s
+    {{- if hasKey .Values "debug" }}
+      clusterName: {{ .Values.global.clusterName }}
     clusterName: {{ .Values.global.clusterName }}
     internetService:
       clusterName: {{ .Values.global.clusterName }}
-    loadBalancer:
-      clusterName: {{ .Values.global.clusterName }}
-      loadbalancername: {{ .Values.global.clusterName }}-k8s
     natService:
       clusterName: {{ .Values.global.clusterName }}
     net:
       clusterName: {{ .Values.global.clusterName }}
+    {{- end }}
     {{- if hasKey .Values "subregionName" }}
     subregionName: {{ .Values.subregionName  }}
     {{- end }}
@@ -112,14 +114,14 @@ spec:
   template:
     spec:
       node:
-        clusterName: {{ .Values.global.clusterName }}
+        # clusterName: {{ .Values.global.clusterName }}
         image:
           name: {{ .Values.image }}
         keypair:
           name: {{ .Values.sshkeyname }}
           deleteKeypair: false
         vm:
-          clusterName: {{ .Values.global.clusterName }}
+          # clusterName: {{ .Values.global.clusterName }}
           keypairName: {{ .Values.sshkeyname }}
           rootDisk:
             rootDiskIops: 100
@@ -138,14 +140,14 @@ spec:
   template:
     spec:
       node:
-        clusterName: {{ .Values.global.clusterName }}
+        #clusterName: {{ .Values.global.clusterName }}
         image:
           name: {{ .Values.image }}
         keypair:
           name: {{ .Values.sshkeyname }}
           deleteKeypair: false
         vm:
-          clusterName: {{ .Values.global.clusterName }}
+          #clusterName: {{ .Values.global.clusterName }}
           keypairName: {{ .Values.sshkeyname }}
           loadBalancerName: {{ .Values.global.clusterName }}-k8s
           role: controlplane
