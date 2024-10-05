@@ -65,7 +65,7 @@ metadata:
 spec:
   network:
     bastion:
-      clusterName: {{ .Values.global.clusterName }}
+      # clusterName: {{ .Values.global.clusterName }}
       enable: false
     loadBalancer:
       loadbalancername: {{ .Values.global.clusterName }}-k8s
@@ -87,12 +87,17 @@ apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
 metadata:
   name: {{ .Values.global.clusterName }}
+  labels:
+    cluster.x-k8s.io/name: {{ .Values.global.clusterName }}
 spec:
   clusterName: {{ .Values.global.clusterName }}
   replicas: 1
   selector:
     matchLabels: null
   template:
+    metadata:
+      labels:
+        cluster.x-k8s.io/name: {{ .Values.global.clusterName }}
     spec:
       bootstrap:
         configRef:
