@@ -66,6 +66,7 @@ spec:
           name: '{{ ds.meta_data.local_hostname }}'
       preKubeadmCommands:
         - sh /tmp/set_runc.sh
+      verbosity: 10
 ---
 apiVersion: controlplane.cluster.x-k8s.io/v1beta1
 kind: KubeadmControlPlane
@@ -82,6 +83,37 @@ spec:
       owner: root:root
       path: /tmp/set_runc.sh
       permissions: "0744"
+    - content: |
+        #!/bin/bash
+        set -x
+        echo "### DEBUG START ############"
+        set +e
+        # Define the retry function
+        wait_and_retry() {
+          local retries="$1"
+          local wait="$2"
+          local command="$3"
+
+          $command
+          local exit_code=$?
+
+          if [[ $exit_code -ne 0 && $retries -gt 0 ]]; then
+            echo "# Wait $wait before retrying $retries"
+            sleep $wait
+            wait_and_retry $(($retries - 1)) $wait "$command"
+          else
+            return $exit_code
+          fi
+        }
+        echo "ds.meta_data.hostname {{ ds.meta_data.hostname }}"
+        endpoint=$(grep "controlPlaneEndpoint" /run/kubeadm/kubeadm.yaml|awk ' {print $2 }' |sed -e 's/ //g')
+
+        wait_and_retry 180 10 "host $endpoint"
+
+        echo "### DEBUG END ############"
+      owner: root:root
+      path: /tmp/debug.sh
+      permissions: "0755"
     initConfiguration:
       nodeRegistration:
         kubeletExtraArgs:
@@ -94,7 +126,9 @@ spec:
           cloud-provider: external
           provider-id: 'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'
     preKubeadmCommands:
+      - /tmp/debug.sh
       - sh /tmp/set_runc.sh
+    verbosity: 10
   machineTemplate:
     infrastructureRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
@@ -122,7 +156,7 @@ spec:
             rootDiskIops: 100
             rootDiskSize: 30
             rootDiskType: standard
-          vmType: tinav5.c2r4p2
+          vmType: tinav5.c2r4p3
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: OscMachineTemplate
@@ -145,7 +179,7 @@ spec:
             rootDiskIops: 100
             rootDiskSize: 30
             rootDiskType: standard
-          vmType: tinav5.c2r4p2
+          vmType: tinav5.c2r4p3
 ---
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
