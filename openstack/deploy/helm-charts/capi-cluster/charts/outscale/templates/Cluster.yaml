@@ -397,7 +397,6 @@ spec:
             return $exit_code
           fi
         }
-        echo "ds.meta_data.hostname {{ ds.meta_data.hostname }}"
         endpoint=$(grep "controlPlaneEndpoint" /run/kubeadm/kubeadm.yaml|awk ' {print $2 }' |sed -e 's/ //g;s/:.*//g')
 
         wait_and_retry 360 10 "host $endpoint"
