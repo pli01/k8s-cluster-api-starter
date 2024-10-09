@@ -47,8 +47,6 @@ kind: ClusterResourceSet
 metadata:
   name: {{ .Values.global.clusterName }}-cilium-config
   namespace: default
-  labels:
-    cluster.x-k8s.io/name: {{ .Values.global.clusterName }}
 spec:
   clusterSelector:
     matchLabels:
