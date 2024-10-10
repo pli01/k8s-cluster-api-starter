@@ -1,0 +1,30 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: {{ .Values.global.clusterName }}
+spec:
+  clusterName: {{ .Values.global.clusterName }}
+  minReadySeconds: 0
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels: null
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          name: {{ .Values.global.clusterName }}-md-0
+      clusterName: {{ .Values.global.clusterName }}
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: OscMachineTemplate
+        name: {{ .Values.global.clusterName }}-md-0
+      version: v1.29.5

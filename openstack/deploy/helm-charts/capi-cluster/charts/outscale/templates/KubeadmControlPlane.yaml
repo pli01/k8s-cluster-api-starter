@@ -1,0 +1,95 @@
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: KubeadmControlPlane
+metadata:
+  name: {{ .Values.global.clusterName }}-control-plane
+spec:
+  kubeadmConfigSpec:
+    preKubeadmCommands:
+      - echo debug-pre > /tmp/out
+      - mkdir -p /etc/pre-kubeadm-commands
+      - for script in $(find /etc/pre-kubeadm-commands/ -name '*.sh' -type f | sort);
+        do echo "Running script $script"; "$script"; done
+    postKubeadmCommands:
+      - echo debug-post >> /tmp/out
+      - mkdir -p /etc/post-kubeadm-commands
+      - for script in $(find /etc/post-kubeadm-commands/ -name '*.sh' -type f | sort);
+        do echo "Running script $script"; "$script"; done
+    files:
+    - content: |
+        #!/bin/bash
+        grep '^      limits:' /etc/kubernetes/manifests/kube-apiserver.yaml >/dev/null 2>&1 && exit 0
+        MEM=$(free -m | grep '^Mem:' | awk '{print $2;}')
+        CPU=$(grep '^processor' /proc/cpuinfo | wc -l)
+        sed -i "/^ *requests:/i\      limits:\n        memory: $((10+3*$MEM/4))M\n        cpu: $((750*$CPU))m" /etc/kubernetes/manifests/kube-apiserver.yaml
+        sed -i "/^ *requests:/a\        memory: 512M" /etc/kubernetes/manifests/kube-apiserver.yaml
+        sync
+        systemctl restart kubelet
+      owner: root:root
+      path: /etc/post-kubeadm-commands/10-tweak-kubeapi-memlimit.sh
+      permissions: "0700"
+    - content: |
+        #!/bin/sh
+        curl https://github.com/opencontainers/runc/releases/download/v1.1.1/runc.amd64 -Lo /tmp/runc.amd64
+        chmod +x /tmp/runc.amd64
+        cp -f /tmp/runc.amd64 /usr/local/sbin/runc
+      owner: root:root
+      path: /etc/pre-kubeadm-commands/10-set_runc.sh
+      permissions: "0744"
+    - content: |
+        #!/bin/bash
+        set +e
+        # Define the retry function
+        wait_and_retry() {
+          local retries="$1"
+          local wait="$2"
+          local command="$3"
+
+          $command
+          local exit_code=$?
+
+          if [[ $exit_code -ne 0 && $retries -gt 0 ]]; then
+            echo "# Wait $wait before retrying $retries"
+            sleep $wait
+            wait_and_retry $(($retries - 1)) $wait "$command"
+          else
+            return $exit_code
+          fi
+        }
+        endpoint=$(grep "controlPlaneEndpoint" /run/kubeadm/kubeadm.yaml|awk ' {print $2 }' |sed -e 's/ //g;s/:.*//g')
+
+        wait_and_retry 360 10 "host $endpoint"
+      owner: root:root
+      path: /etc/pre-kubeadm-commands/00-wait_endpoint.sh
+      permissions: "0755"
+#    clusterConfiguration:
+#      apiServer:
+#        extraArgs:
+#          cloud-provider: external
+#      controllerManager:
+#        extraArgs:
+#          cloud-provider: external
+    initConfiguration:
+      nodeRegistration:
+        imagePullPolicy: IfNotPresent
+        kubeletExtraArgs:
+          cloud-provider: external
+          provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
+        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
+    joinConfiguration:
+      nodeRegistration:
+        imagePullPolicy: IfNotPresent
+        kubeletExtraArgs:
+          cloud-provider: external
+          provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
+    verbosity: 10
+  machineTemplate:
+    infrastructureRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: OscMachineTemplate
+      name: {{ .Values.global.clusterName }}-control-plane
+  replicas: 1
+  rolloutStrategy:
+    rollingUpdate:
+      maxSurge: 1
+    type: RollingUpdate
+  version: v1.29.5
