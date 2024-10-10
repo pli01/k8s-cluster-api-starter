@@ -101,6 +101,9 @@ openstack: {}
 ##    cacert: _REPLACE_WITH_B64ENCODED_CACERT_
 ##    cloudsYaml: _REPLACE_WITH_B64_cloud.yaml_
 #
+##  dockerConfig:
+#     registry: https://index.docker.io/v1/
+#     auth: base64(docker_login:docker_password)
 #
 # reference to outscale helm values
 #
@@ -114,3 +117,7 @@ outscale: {}
 #     secret_key: ""
 #     access_key: ""
 #     region: ""
+#
+##  dockerConfig:
+#     registry: https://index.docker.io/v1/
+#     auth: base64(docker_login:docker_password)
