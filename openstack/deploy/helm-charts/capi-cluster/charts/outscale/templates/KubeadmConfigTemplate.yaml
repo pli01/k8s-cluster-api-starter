@@ -1,7 +1,9 @@
+{{- $values := .Values }}
+{{- range $name, $pool := .Values.workers }}
 apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
 kind: KubeadmConfigTemplate
 metadata:
-  name: {{ .Values.global.clusterName }}-md-0
+  name: {{ $.Values.global.clusterName }}-{{ $name }}
 spec:
   template:
     spec:
@@ -22,7 +24,7 @@ spec:
           chmod +x /tmp/runc.amd64
           cp -f /tmp/runc.amd64 /usr/local/sbin/runc
         owner: root:root
-        path: /tmp/set_runc.sh
+        path: /etc/pre-kubeadm-commands/10-set_runc.sh
         permissions: "0744"
       joinConfiguration:
         nodeRegistration:
@@ -30,6 +32,9 @@ spec:
           kubeletExtraArgs:
             cloud-provider: external
             provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
+            {{- with $pool.nodeLabels }}
+            node-labels: "{{ range $i, $k := (keys . | sortAlpha) }}{{ if ne $i 0 }},{{ end }}{{ $k }}={{ index $pool.nodeLabels $k }}{{ end }}"
+            {{- end }}
           name: {{`'{{ ds.meta_data.local_hostname }}'`}}
-      preKubeadmCommands:
-      - sh /tmp/set_runc.sh
+---
+{{- end }}
