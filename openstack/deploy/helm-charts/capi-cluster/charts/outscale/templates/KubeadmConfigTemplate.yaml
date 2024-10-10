@@ -1,0 +1,35 @@
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  name: {{ .Values.global.clusterName }}-md-0
+spec:
+  template:
+    spec:
+      preKubeadmCommands:
+        - echo debug-pre > /tmp/out
+        - mkdir -p /etc/pre-kubeadm-commands
+        - for script in $(find /etc/pre-kubeadm-commands/ -name '*.sh' -type f | sort);
+          do echo "Running script $script"; "$script"; done
+      postKubeadmCommands:
+        - echo debug-post >> /tmp/out
+        - mkdir -p /etc/post-kubeadm-commands
+        - for script in $(find /etc/post-kubeadm-commands/ -name '*.sh' -type f | sort);
+          do echo "Running script $script"; "$script"; done
+      files:
+      - content: |
+          #!/bin/bash
+          curl https://github.com/opencontainers/runc/releases/download/v1.1.1/runc.amd64 -Lo /tmp/runc.amd64
+          chmod +x /tmp/runc.amd64
+          cp -f /tmp/runc.amd64 /usr/local/sbin/runc
+        owner: root:root
+        path: /tmp/set_runc.sh
+        permissions: "0744"
+      joinConfiguration:
+        nodeRegistration:
+          imagePullPolicy: IfNotPresent
+          kubeletExtraArgs:
+            cloud-provider: external
+            provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
+          name: {{`'{{ ds.meta_data.local_hostname }}'`}}
+      preKubeadmCommands:
+      - sh /tmp/set_runc.sh
