@@ -24,6 +24,7 @@ spec:
   version: {{ .Values.global.addons.ccm.version }}
   namespace: kube-system
   valuesTemplate: |
+    imagePullSecrets: regcred
     oscSecretName: osc-secret
     extraEnv:
     {{- if .Values.global.https_proxy }}
