@@ -111,7 +111,7 @@ outscale: {}
 #   sshkeyname: REPLACE_SSH_KEY_NAME_
 #   subregionName: "eu-west-2a"
 # bastion:
-#   enabled: false
+#   enable: false
 # controlplane:
 #   version: v1.29.5
 #   replicas: 1
