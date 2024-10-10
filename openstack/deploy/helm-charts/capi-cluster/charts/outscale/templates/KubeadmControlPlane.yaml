@@ -69,6 +69,11 @@ spec:
 #        extraArgs:
 #          cloud-provider: external
     initConfiguration:
+      {{ if and .Values.global.addons.cni.enabled ( eq .Values.global.addons.cni.type "cilium" ) -}}
+      # cilium replace kube-proxy
+      skipPhases:
+        - addon/kube-proxy
+      {{ end -}}
       nodeRegistration:
         imagePullPolicy: IfNotPresent
         kubeletExtraArgs:
@@ -81,15 +86,16 @@ spec:
         kubeletExtraArgs:
           cloud-provider: external
           provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
+          name: {{`'{{ ds.meta_data.local_hostname }}'`}}
     verbosity: 10
   machineTemplate:
     infrastructureRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
       kind: OscMachineTemplate
-      name: {{ .Values.global.clusterName }}-control-plane
-  replicas: 1
+      name: {{ .Values.global.clusterName }}-control-plane-{{ .Values.controlplane.version }}
+  replicas: {{ .Values.controlplane.replicas | default 1 }}
+  version: {{ .Values.controlplane.version }}
   rolloutStrategy:
     rollingUpdate:
       maxSurge: 1
     type: RollingUpdate
-  version: v1.29.5

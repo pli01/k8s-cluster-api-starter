@@ -12,16 +12,28 @@ addons:
 certmanager: {}
 csi: {}
 
-# dockerConfig:
-#   registry: https://index.docker.io/v1/
-#   auth: base64(docker_login:docker_password)
-
+#dockerConfig:
+#  registry: https://index.docker.io/v1/
+#  auth: base64(docker_login:docker_password)
+#
 #
 # outscale
 # sshkeyname: REPLACE_MY_KEY
 # subregionName: "eu-west-2a"
-vmType: tinav5.c2r4p3
-image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+#
+#bastion:
+#  enable: false
+#controlplane:
+#  version: v1.29.5
+#  replicas: 1
+#  vmType: tinav5.c2r4p3
+#  image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+#workers:
+#  - name: md-0
+#    version: v1.29.5
+#    replicas: 0
+#    vmType: tinav5.c2r4p3
+#    image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
 #
 # credentials for ccm
 #

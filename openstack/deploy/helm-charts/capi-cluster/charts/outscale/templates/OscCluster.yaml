@@ -7,7 +7,7 @@ spec:
   network:
     clusterName: {{ .Values.global.clusterName }}
     bastion:
-      enable: false
+      enable: {{ .Values.bastion.enable | default "false" }}
       clusterName: {{ .Values.global.clusterName }}
     internetService:
       clusterName: {{ .Values.global.clusterName }}

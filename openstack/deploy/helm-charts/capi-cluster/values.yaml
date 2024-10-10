@@ -110,6 +110,20 @@ openstack: {}
 outscale: {}
 #   sshkeyname: REPLACE_SSH_KEY_NAME_
 #   subregionName: "eu-west-2a"
+# bastion:
+#   enable: false
+# controlplane:
+#   version: v1.29.5
+#   replicas: 1
+#   vmType: tinav5.c2r4p3
+#   image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+# workers:
+#   - name: md-0
+#     version: v1.29.5
+#     replicas: 0
+#     vmType: tinav5.c2r4p3
+#     image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+#
 #   vmType: tinav5.c2r4p3
 #   image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
 #
