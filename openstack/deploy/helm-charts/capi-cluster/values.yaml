@@ -117,12 +117,20 @@ outscale: {}
 #   replicas: 1
 #   vmType: tinav5.c2r4p3
 #   image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+#   rootDisk:
+#     rootDiskIops: 100
+#     rootDiskSize: 30
+#     rootDiskType: standard
 # workers:
 #   - name: md-0
 #     version: v1.29.5
 #     replicas: 0
 #     vmType: tinav5.c2r4p3
 #     image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
+#     rootDisk:
+#       rootDiskIops: 100
+#       rootDiskSize: 30
+#       rootDiskType: standard
 #
 #   vmType: tinav5.c2r4p3
 #   image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19

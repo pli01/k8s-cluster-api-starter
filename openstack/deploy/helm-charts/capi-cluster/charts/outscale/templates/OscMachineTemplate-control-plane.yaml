@@ -17,8 +17,10 @@ spec:
           keypairName: {{ .Values.sshkeyname }}
           loadBalancerName: {{ .Values.global.clusterName }}-k8s
           role: controlplane
-          rootDisk:
-            rootDiskIops: 100
-            rootDiskSize: 30
-            rootDiskType: standard
           vmType: {{ .Values.controlplane.vmType }}
+          {{- if hasKey .Values.controlplane "rootDisk" }}
+          rootDisk:
+            rootDiskIops: {{ .Values.controlplane.rootDisk.rootDiskIops | default 100 }}
+            rootDiskSize: {{ .Values.controlplane.rootDisk.rootDiskSize | default 30 }}
+            rootDiskType: {{ .Values.controlplane.rootDisk.rootDiskType | default "standard" }}
+          {{- end }}

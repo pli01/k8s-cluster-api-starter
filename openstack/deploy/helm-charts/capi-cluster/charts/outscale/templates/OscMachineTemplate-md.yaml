@@ -18,10 +18,12 @@ spec:
         vm:
           clusterName: {{ $.Values.global.clusterName }}
           keypairName: {{ $.Values.sshkeyname }}
-          rootDisk:
-            rootDiskIops: 100
-            rootDiskSize: 30
-            rootDiskType: standard
           vmType: {{ $pool.vmType }}
+          {{- if hasKey $pool "rootDisk" }}
+          rootDisk:
+            rootDiskIops: {{ $pool.rootDisk.rootDiskIops | default 100 }}
+            rootDiskSize: {{ $pool.rootDisk.rootDiskSize | default 30 }}
+            rootDiskType: {{ $pool.rootDisk.rootDiskType | default "standard" }}
+          {{- end }}
 ---
 {{- end }}
