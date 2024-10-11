@@ -23,6 +23,7 @@ csi: {}
 #
 #bastion:
 #  enable: false
+#loadbalancername: my-lb
 #controlplane:
 #  version: v1.29.5
 #  replicas: 1

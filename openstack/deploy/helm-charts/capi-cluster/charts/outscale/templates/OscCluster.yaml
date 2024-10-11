@@ -25,7 +25,7 @@ spec:
         backendprotocol: TCP
         loadbalancerport: 6443
         loadbalancerprotocol: TCP
-      loadbalancername: {{ .Values.global.clusterName }}-k8s
+      loadbalancername: {{ .Values.loadbalancername | default "{{ .Values.global.clusterName }}-k8s" }}
       loadbalancertype: internet-facing
     natService:
       clusterName: {{ .Values.global.clusterName }}

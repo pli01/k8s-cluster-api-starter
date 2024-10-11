@@ -15,7 +15,7 @@ spec:
         vm:
           clusterName: {{ .Values.global.clusterName }}
           keypairName: {{ .Values.sshkeyname }}
-          loadBalancerName: {{ .Values.global.clusterName }}-k8s
+          loadBalancerName: {{ .Values.loadbalancername | default "{{ .Values.global.clusterName }}-k8s" }}
           role: controlplane
           vmType: {{ .Values.controlplane.vmType }}
           {{- if hasKey .Values.controlplane "rootDisk" }}
