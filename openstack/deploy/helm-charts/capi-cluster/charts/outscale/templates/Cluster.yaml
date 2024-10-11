@@ -45,7 +45,7 @@ spec:
   clusterNetwork:
     pods:
       cidrBlocks:
-        - {{ .Values.global.pods.cidrBlocks | default "172.16.0.0/16" }}
+        - {{ .Values.global.pods.cidrBlocks | default "10.42.0.0/16" }}
     services:
       cidrBlocks:
         - {{ .Values.global.services.cidrBlocks | default "10.96.0.0/12" }}
