@@ -25,8 +25,8 @@ spec:
   namespace: kube-system
   valuesTemplate: |
     imagePullSecrets: regcred
-    enableVolumeResizing: false
-    enableVolumeSnapshot: false
+    enableVolumeResizing: true
+    enableVolumeSnapshot: true
     credentials:
       secretName: osc-bsu-csi
     {{- if .Values.global.https_proxy }}
