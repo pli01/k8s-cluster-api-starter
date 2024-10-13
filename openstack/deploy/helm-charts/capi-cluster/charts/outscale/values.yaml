@@ -33,6 +33,12 @@ csi: {}
 #    rootDiskIops: 100
 #    rootDiskSize: 30
 #    rootDiskType: standard
+#  volumes:
+#    - name: data-volume
+#      size: 10
+#      iops: 100
+#      volumeType: standard
+#      subregionName: eu-west-2a
 #workers:
 #  - name: md-0
 #    version: v1.29.5

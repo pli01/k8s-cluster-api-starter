@@ -24,3 +24,6 @@ spec:
             rootDiskSize: {{ .Values.controlplane.rootDisk.rootDiskSize | default 30 }}
             rootDiskType: {{ .Values.controlplane.rootDisk.rootDiskType | default "standard" }}
           {{- end }}
+        {{- with .Values.controlplane.volumes }}
+        volumes: {{- toYaml . | nindent 10 }}
+        {{- end }}

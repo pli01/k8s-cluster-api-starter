@@ -25,5 +25,8 @@ spec:
             rootDiskSize: {{ $pool.rootDisk.rootDiskSize | default 30 }}
             rootDiskType: {{ $pool.rootDisk.rootDiskType | default "standard" }}
           {{- end }}
+        {{- with $pool.volumes }}
+        volumes: {{- toYaml . | nindent 10 }}
+        {{- end }}
 ---
 {{- end }}
