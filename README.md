@@ -1,14 +1,15 @@
 # k8s-cluster-api-starter
 
-Useful steps, configuration and scripts to build kubernetes images and deploy cluster-api clusters on openstack or outscale
+To build kubernetes images and deploy cluster-api clusters on Openstack cloud or Outscale cloud
+Useful helm-charts configuration files and build scripts 
 
 For more details see the directories
+- helm-charts directory allow to manages the lifecycle of a Kubernetes clusters on different cloud using Cluster API.
+- build directory allow to build kubernetes node images on different cloud
 
 Tested on:
 - openstack
-
-Todo:
-- outscale
+- outscale (in progress)
 
 ## Documentation reference:
 

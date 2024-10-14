@@ -15,7 +15,7 @@ spec:
       storagelocal.enabled: "true"
       storagelocal.type: {{ .Values.global.addons.storagelocal.type }}
       storagelocal.version: {{ .Values.global.addons.storagelocal.version }}
-  repoURL: https://raw.githubusercontent.com/pli01/k8s-cluster-api-starter/main/openstack/deploy/helm-charts/repo/
+  repoURL: https://raw.githubusercontent.com/pli01/k8s-cluster-api-starter/main/helm-charts/repo/
   chartName: local-path-provisioner
   version: {{ .Values.global.addons.storagelocal.version }}
   releaseName: local-path-provisioner
