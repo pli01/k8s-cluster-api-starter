@@ -55,9 +55,11 @@ spec:
             return $exit_code
           fi
         }
-        endpoint=$(grep "controlPlaneEndpoint" /run/kubeadm/kubeadm.yaml|awk ' {print $2 }' |sed -e 's/ //g;s/:.*//g')
+        endpoint=""
+        [[ -f /run/kubeadm/kubeadm.yaml ]] && endpoint=$(grep "controlPlaneEndpoint" /run/kubeadm/kubeadm.yaml|awk ' {print $2 }' |sed -e 's/ //g;s/:.*//g')
+        [[ -f  /run/kubeadm/kubeadm-join-config.yaml ]] && endpoint=$(grep "apiServerEndpoint" /run/kubeadm/kubeadm-join-config.yaml |awk ' {print $2 }' |sed -e 's/ //g;s/:.*//g')
 
-        wait_and_retry 360 10 "host $endpoint"
+        [[ -n "$endpoint" ]] &&wait_and_retry 360 10 "host $endpoint"
       owner: root:root
       path: /etc/pre-kubeadm-commands/00-wait_endpoint.sh
       permissions: "0755"
