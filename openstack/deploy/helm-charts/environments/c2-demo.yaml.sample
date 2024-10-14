@@ -1,0 +1,51 @@
+provider:
+  outscale: true
+global:
+  # custom proxy
+  http_proxy: http://192.168.2.10:8888
+  https_proxy: http://192.168.2.10:8888
+  no_proxy: localhost,192.168.0.0/16
+
+  clusterName: c2-demo
+
+  # helm addons
+  addons:
+    cni:
+      enabled: true
+      type: cilium
+      version: 1.15.8
+      config:
+        ipaddresspool:
+          layer: "l2"
+          name: "first-pool"
+          addresses:
+            - 192.168.101.11/32
+    ccm:
+      enabled: true
+      type: outscale
+      version: 0.3.0
+    csi:
+      enabled: false
+    storagelocal:
+      enabled: false
+      type: storagelocal
+      version: 0.0.25
+    metallb:
+      enabled: false
+    ingress:
+      enabled: false
+      type: ingress-nginx
+      version: 4.10.1
+    certmanager:
+      enabled: false
+      type: cert-manager
+      version: v1.14.5
+
+outscale:
+  sshkeyname: REPLACE_SSH_KEY_NAME_
+  subregionname: eu-west-2a
+  osc_credentials:
+    secret_key: ""
+    access_key: ""
+    region: ""
+
