@@ -1,5 +1,7 @@
 # deploy cluster-api on openstack
 
+! this document serves as a note-taking !
+
 The following steps must run on an instance with:
   - install prereq: yq, env.rc
   - install clusterctl
@@ -370,27 +372,3 @@ See helm-charts directory
 
 ### With LB (metallb) + ingress-nginx
 
-
-# Cluster templates
-
-cluster-templates are available in templates dir
-
-
-The following workload cluster infrastructures have been tested in openstack cloud
-
-- managed subnet, without LBaaS, without ctrlplane HA
-
-![managed subnet, without LBaaS, without API HA](docs/cluster-api-cluster-managed-subnet.drawio.png)
-
-
-- existing network, without LBaaS, HA ctrlplane with kube-vip
-
-![existing subnet, without LBaaS, with API HA with kube-vip](docs/cluster-api-cluster-kube-vip.drawio.png)
-
-- existing subnet, with calico + LB metallb for workload traffic, with API HA with kube-vip
-
-![existing subnet, with LB metallb for workload traffic, with API HA with kube-vip](docs/cluster-api-cluster-kube-vip-metallb.drawio.png)
-
-- existing subnet, with cilium LB for workload traffic, with API HA with kube-vip
-
-![existing subnet, with LB cilium for workload traffic, with API HA with kube-vip](docs/cluster-api-cluster-kube-vip-cilium.drawio.png)

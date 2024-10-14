@@ -6,11 +6,11 @@ Currently, the following charts are available:
 | Chart | Description |
 | --- | --- |
 | [capi-cluster-addons](./capi-cluster-addons) | Deploys addons into a Kubernetes cluster, e.g. CCM, CNI, CSI. |
-| [capi-cluster](./capi-cluster) | Deploys a Kubernetes cluster on a cloud. (Openstack,...) |
+| [capi-cluster](./capi-cluster) | Deploys a Kubernetes cluster on a cloud. (Openstack,Outscale...) |
 
 Currently the capi-cluster chart install:
 - workload target cluster on Openstack cloud
-It is planned to include support for other cluster API providers. (outscale)
+- workload target cluster on Outscale cloud
 
 In addition, it is possible to install in each clusters, additional components (addons) in the form of helm charts such as CNI, CCM, CSI ..
 
@@ -20,18 +20,22 @@ the following are required for a functional cluster: CCM, CNI
 
 Providers:
   - openstack
+  - outscale
 
 Helmchartproxy addons:
-  - ccm: openstack-cloud-controller-manager
-  - cni: (choose on)
+  - ccm:
+    - openstack-cloud-controller-manager
+    - outscale: osc-cloud-controller-manager
+  - cni:
+    - cilium (include LB) - prefered
     - calico
-    - cilium (include LB)
-  - csi: openstack-cinder-csi (use a patch version to use extraEnv)
+  - csi:
+    - openstack-cinder-csi
+    - osc-bsu-csi-chart
   - metallb (with calico): LB for ingress
   - ingress-nginx
   - cert-manager
   - local-path-provisioner (use helm index in this repo from rancher)
-
 
 ## directory structures
 
