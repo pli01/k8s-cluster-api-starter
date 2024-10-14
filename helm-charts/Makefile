@@ -11,7 +11,7 @@ package-capi-cluster-addons:
 	helm package capi-cluster-addons -d repo/
 package-local-path-provisioner:
 	( rm -rf local-path-provisioner ; \
-          git clone https://github.com/rancher/local-path-provisioner.git --depth 1 --branch v0.0.27 ; \
+          git clone https://github.com/rancher/local-path-provisioner.git --depth 1 --branch v0.0.30 ; \
           helm package local-path-provisioner/deploy/chart/local-path-provisioner -d repo/ ; \
           rm -rf local-path-provisioner )
 package-cloud-provider-openstack:
