@@ -178,13 +178,13 @@ spec:
         name: {{ .Values.global.clusterName }}-securityrgroup-cilium-hubble
         toPortRange: 4244
       tag: OscK8sMainSG
-#    subnets:
-#    - ipSubnetRange: 10.0.4.0/24
-#      name: {{ .Values.global.clusterName }}-subnet-kcp
-#      subregionName: {{ .Values.subregionName  }}
-#    - ipSubnetRange: 10.0.3.0/24
-#      name: {{ .Values.global.clusterName }}-subnet-kw
-#      subregionName: {{ .Values.subregionName  }}
-#    - ipSubnetRange: 10.0.2.0/24
-#      name: {{ .Values.global.clusterName }}-subnet-public
-#      subregionName: {{ .Values.subregionName  }}
+    subnets:
+    - ipSubnetRange: 10.0.4.0/24
+      name: {{ .Values.global.clusterName }}-subnet-kcp
+      subregionName: {{ .Values.subregionName  }}
+    - ipSubnetRange: 10.0.3.0/24
+      name: {{ .Values.global.clusterName }}-subnet-kw
+      subregionName: {{ .Values.subregionName  }}
+    - ipSubnetRange: 10.0.2.0/24
+      name: {{ .Values.global.clusterName }}-subnet-public
+      subregionName: {{ .Values.subregionName  }}

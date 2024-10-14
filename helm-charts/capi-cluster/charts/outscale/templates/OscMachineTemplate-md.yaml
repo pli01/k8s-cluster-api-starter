@@ -19,6 +19,7 @@ spec:
           clusterName: {{ $.Values.global.clusterName }}
           keypairName: {{ $.Values.sshkeyname }}
           vmType: {{ $pool.vmType }}
+          subregionName: {{ $pool.subregionName  }}
           {{- if hasKey $pool "rootDisk" }}
           rootDisk:
             rootDiskIops: {{ $pool.rootDisk.rootDiskIops | default 100 }}

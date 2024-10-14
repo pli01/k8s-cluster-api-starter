@@ -108,14 +108,10 @@ openstack: {}
 # reference to outscale helm values
 #
 outscale: {}
-#   sshkeyname: REPLACE_SSH_KEY_NAME_
-#   subregionName: "eu-west-2a"
+# sshkeyname: REPLACE_SSH_KEY_NAME_
+# subregionName: "eu-west-2a"
 # bastion:
 #   enable: false
-# controlplane:
-#   version: v1.29.5
-#   replicas: 1
-#   vmType: tinav5.c2r4p3
 #   image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
 #   rootDisk:
 #     rootDiskIops: 100
@@ -127,24 +123,26 @@ outscale: {}
 #       iops: 100
 #       volumeType: standard
 #       subregionName: eu-west-2a
+# controlplane:
+#   version: v1.29.5
+#   replicas: 1
+#   vmType: tinav5.c2r4p3
+#   subregionName: "eu-west-2a"
 # workers:
 #   - name: md-0
 #     version: v1.29.5
 #     replicas: 0
 #     vmType: tinav5.c2r4p3
+#     subregionName: "eu-west-2a"
 #     image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
 #     rootDisk:
 #       rootDiskIops: 100
 #       rootDiskSize: 30
 #       rootDiskType: standard
-#
-#   vmType: tinav5.c2r4p3
-#   image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
-#
-#   osc_credentials:
-#     secret_key: ""
-#     access_key: ""
-#     region: ""
+#  osc_credentials:
+#    secret_key: ""
+#    access_key: ""
+#    region: ""
 #
 ##  dockerConfig:
 #     registry: https://index.docker.io/v1/

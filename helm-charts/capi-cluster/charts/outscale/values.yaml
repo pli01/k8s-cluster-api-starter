@@ -18,8 +18,8 @@ csi: {}
 #
 #
 # outscale
-# sshkeyname: REPLACE_MY_KEY
-# subregionName: "eu-west-2a"
+#sshkeyname: REPLACE_MY_KEY
+#subregionName: "eu-west-2a"
 #
 #bastion:
 #  enable: false
@@ -28,6 +28,7 @@ csi: {}
 #  version: v1.29.5
 #  replicas: 1
 #  vmType: tinav5.c2r4p3
+#  subregionName: eu-west-2a
 #  image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
 #  rootDisk:
 #    rootDiskIops: 100
@@ -44,6 +45,7 @@ csi: {}
 #    version: v1.29.5
 #    replicas: 0
 #    vmType: tinav5.c2r4p3
+#    subregionName: eu-west-2a
 #    image: ubuntu-22.04-2204-kubernetes-v1.29.1-2024-02-19
 #    rootDisk:
 #      rootDiskIops: 100
