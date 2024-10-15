@@ -4,14 +4,20 @@ To build kubernetes images and deploy cluster-api clusters on Openstack cloud or
 Useful helm-charts configuration files and build scripts 
 
 For more details see the directories
-- helm-charts directory allow to manages the lifecycle of a Kubernetes clusters on different cloud using Cluster API.
-- image-builder directory allow to build and customize kubernetes node images for different cloud
+- helm-charts: manages the lifecycle of a Kubernetes clusters on different cloud using Cluster API.
+- image-builder: to build and customize kubernetes node images for different cloud
+- docs
 
 Tested on:
 - openstack
 - outscale (in progress)
 
+## Principle
+![Principle](docs/images/2-cluster-api-flow.drawio.png)
+
 ## Documentation reference:
+
+
 
 Image builder:
 - https://image-builder.sigs.k8s.io/capi/container-image
