@@ -1,5 +1,18 @@
 # Deploy cluster-api on cloud
 
+## Promise
+![the promise of cluster-api ](images/0-plateform-goal-1.drawio.png)
+
+## Principle
+![Principle](images/2-cluster-api-flow.drawio.png)
+
+## Multi provider
+![Multi provider](images/3-cluster-api-principe.drawio.png)
+
+## Factory
+![factory](images/6-cluster-api-composants-2.drawio.png)
+
+
 ## deploy cluster-api on openstack
 
 The following steps must run on an instance with:
