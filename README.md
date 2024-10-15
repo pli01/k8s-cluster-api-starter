@@ -5,7 +5,7 @@ Useful helm-charts configuration files and build scripts
 
 For more details see the directories
 - helm-charts directory allow to manages the lifecycle of a Kubernetes clusters on different cloud using Cluster API.
-- build directory allow to build kubernetes node images on different cloud
+- image-builder directory allow to build and customize kubernetes node images for different cloud
 
 Tested on:
 - openstack
