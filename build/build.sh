@@ -11,7 +11,7 @@
 PACKER_PROVIDER="${1:? provider needed (openstack,outscale)}"
 kube_version="${2:-}"
 docker_args=" $3 "
-IMAGE_BUILDER_VERSION="${IMAGE_BUILDER_VERSION:-v0.1.36}"
+IMAGE_BUILDER_VERSION="${IMAGE_BUILDER_VERSION:-v0.1.38}"
 
 packer_provider_json="./config/packer.$PACKER_PROVIDER.json"
 packer_provider_rc="./config/packer.$PACKER_PROVIDER.rc"
