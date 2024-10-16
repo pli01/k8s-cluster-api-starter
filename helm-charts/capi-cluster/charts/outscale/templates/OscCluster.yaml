@@ -158,20 +158,27 @@ spec:
         toPortRange: 8285
         ipProtocol: udp
         ipRange: 10.0.0.0/16
+      # icmp
+      - name: {{ .Values.global.clusterName }}-securitygroup-icmp
+        flow: Inbound
+        fromPortRange: 8
+        toPortRange: 8
+        ipProtocol: icmp
+        ipRange: 10.0.0.0/16
       # cilium
-      - name: {{ .Values.global.clusterName }}-securityrgroup-cilium-vxlan
+      - name: {{ .Values.global.clusterName }}-securitygroup-cilium-vxlan
         flow: Inbound
         fromPortRange: 8472
         toPortRange: 8472
         ipProtocol: udp
         ipRange: 10.0.0.0/16
-      - name: {{ .Values.global.clusterName }}-securityrgroup-cilium-health
+      - name: {{ .Values.global.clusterName }}-securitygroup-cilium-health
         flow: Inbound
         fromPortRange: 4240
         toPortRange: 4240
         ipProtocol: tcp
         ipRange: 10.0.0.0/16
-      - name: {{ .Values.global.clusterName }}-securityrgroup-cilium-hubble
+      - name: {{ .Values.global.clusterName }}-securitygroup-cilium-hubble
         flow: Inbound
         fromPortRange: 4244
         toPortRange: 4244
