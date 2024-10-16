@@ -35,148 +35,148 @@ spec:
     - description: Security Group Kw with {{ .Values.global.clusterName }}
       name: {{ .Values.global.clusterName }}-securitygroup-kw
       securityGroupRules:
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-kw-bgp
+        flow: Inbound
         fromPortRange: 179
+        toPortRange: 179
         ipProtocol: tcp
         ipRange: 10.0.0.0/16
-        name: {{ .Values.global.clusterName }}-securitygrouprule-kw-bgp
-        toPortRange: 179
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-api-kubelet-kw
+        flow: Inbound
         fromPortRange: 10250
+        toPortRange: 10250
         ipProtocol: tcp
         ipRange: 10.0.3.0/24
-        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kubelet-kw
-        toPortRange: 10250
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-kw-nodeip-kcp
+        flow: Inbound
+        toPortRange: 32767
         fromPortRange: 30000
         ipProtocol: tcp
         ipRange: 10.0.4.0/24
-        name: {{ .Values.global.clusterName }}-securitygrouprule-kw-nodeip-kcp
-        toPortRange: 32767
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-api-kubelet-kcp
+        flow: Inbound
         fromPortRange: 10250
+        toPortRange: 10250
         ipProtocol: tcp
         ipRange: 10.0.4.0/24
-        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kubelet-kcp
-        toPortRange: 10250
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-kw-nodeip-kw
+        flow: Inbound
         fromPortRange: 30000
+        toPortRange: 32767
         ipProtocol: tcp
         ipRange: 10.0.3.0/24
-        name: {{ .Values.global.clusterName }}-securitygrouprule-kw-nodeip-kw
-        toPortRange: 32767
     - description: Security Group Kcp with {{ .Values.global.clusterName }}
       name: {{ .Values.global.clusterName }}-securitygroup-kcp
       securityGroupRules:
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-kcp-bgp
+        flow: Inbound
         fromPortRange: 179
+        toPortRange: 179
         ipProtocol: tcp
         ipRange: 10.0.0.0/16
-        name: {{ .Values.global.clusterName }}-securitygrouprule-kcp-bgp
-        toPortRange: 179
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-api-kw
+        flow: Inbound
         fromPortRange: 6443
+        toPortRange: 6443
         ipProtocol: tcp
         ipRange: 10.0.3.0/24
-        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kw
-        toPortRange: 6443
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-api-kcp
+        flow: Inbound
         fromPortRange: 6443
+        toPortRange: 6443
         ipProtocol: tcp
         ipRange: 10.0.4.0/24
-        name: {{ .Values.global.clusterName }}-securitygrouprule-api-kcp
-        toPortRange: 6443
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-kcp-nodeip-kw
+        flow: Inbound
         fromPortRange: 30000
+        toPortRange: 32767
         ipProtocol: tcp
         ipRange: 10.0.3.0/24
-        name: {{ .Values.global.clusterName }}-securitygrouprule-kcp-nodeip-kw
-        toPortRange: 32767
-      - flow: Inbound
-        fromPortRange: 2378
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-etcd
+        flow: Inbound
+        fromPortRange: 2379
+        toPortRange: 2380
         ipProtocol: tcp
         ipRange: 10.0.4.0/24
-        name: {{ .Values.global.clusterName }}-securitygrouprule-etcd
-        toPortRange: 2379
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-kubelet-kcp
+        flow: Inbound
         fromPortRange: 10250
-        ipProtocol: tcp
-        ipRange: 10.0.4.0/24
-        name: {{ .Values.global.clusterName }}-securitygrouprule-kubelet-kcp
         toPortRange: 10252
-      - flow: Inbound
-        fromPortRange: 30000
         ipProtocol: tcp
         ipRange: 10.0.4.0/24
-        name: {{ .Values.global.clusterName }}-securitugrouprule-kcp-nodeip-kcp
+      - name: {{ .Values.global.clusterName }}-securitugrouprule-kcp-nodeip-kcp
+        flow: Inbound
+        fromPortRange: 30000
         toPortRange: 32767
+        ipProtocol: tcp
+        ipRange: 10.0.4.0/24
     - description: Security Group Lb with {{ .Values.global.clusterName }}
       name: {{ .Values.global.clusterName }}-securitygroup-lb
       securityGroupRules:
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-lb
+        flow: Inbound
         fromPortRange: 6443
+        toPortRange: 6443
         ipProtocol: tcp
         ipRange: 0.0.0.0/0
-        name: {{ .Values.global.clusterName }}-securitygrouprule-lb
-        toPortRange: 6443
     - description: Security Group Node with {{ .Values.global.clusterName }}
       name: {{ .Values.global.clusterName }}-securitygroup-node
       securityGroupRules:
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygroup-calico-vxlan
+        flow: Inbound
         fromPortRange: 4789
+        toPortRange: 4789
         ipProtocol: udp
         ipRange: 10.0.0.0/16
-        name: {{ .Values.global.clusterName }}-securitygroup-calico-vxlan
-        toPortRange: 4789
-      - flow: Inbound
+      - name: {{ .Values.global.clusterName }}-securitygroup-typha
+        flow: Inbound
         fromPortRange: 5473
-        ipProtocol: udp
-        ipRange: 10.0.0.0/16
-        name: {{ .Values.global.clusterName }}-securitygroup-typha
         toPortRange: 5473
-      - flow: Inbound
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+      - name: {{ .Values.global.clusterName }}-securitygroup-wireguard
+        flow: Inbound
         fromPortRange: 51820
-        ipProtocol: udp
-        ipRange: 10.0.0.0/16
-        name: {{ .Values.global.clusterName }}-securitygroup-wireguard
         toPortRange: 51820
-      - flow: Inbound
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+      - name: {{ .Values.global.clusterName }}-securitygroup-wireguard-ipv6
+        flow: Inbound
         fromPortRange: 51821
-        ipProtocol: udp
-        ipRange: 10.0.0.0/16
-        name: {{ .Values.global.clusterName }}-securitygroup-wireguard-ipv6
         toPortRange: 51821
-      - flow: Inbound
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+      - name: {{ .Values.global.clusterName }}-securitygroup-flannel
+        flow: Inbound
         fromPortRange: 4789
-        ipProtocol: udp
-        ipRange: 10.0.0.0/16
-        name: {{ .Values.global.clusterName }}-securitygroup-flannel
         toPortRange: 4789
-      - flow: Inbound
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+      - name: {{ .Values.global.clusterName }}-securitygroup-flannel-udp
+        flow: Inbound
         fromPortRange: 8285
-        ipProtocol: udp
-        ipRange: 10.0.0.0/16
-        name: {{ .Values.global.clusterName }}-securitygroup-flannel-udp
         toPortRange: 8285
-      # cilium
-      - flow: Inbound
-        fromPortRange: 8472
         ipProtocol: udp
         ipRange: 10.0.0.0/16
-        name: {{ .Values.global.clusterName }}-securityrgroup-cilium-vxlan
+      # cilium
+      - name: {{ .Values.global.clusterName }}-securityrgroup-cilium-vxlan
+        flow: Inbound
+        fromPortRange: 8472
         toPortRange: 8472
-      - flow: Inbound
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+      - name: {{ .Values.global.clusterName }}-securityrgroup-cilium-health
+        flow: Inbound
         fromPortRange: 4240
-        ipProtocol: tcp
-        ipRange: 10.0.0.0/16
-        name: {{ .Values.global.clusterName }}-securityrgroup-cilium-health
         toPortRange: 4240
-      - flow: Inbound
-        fromPortRange: 4244
         ipProtocol: tcp
         ipRange: 10.0.0.0/16
-        name: {{ .Values.global.clusterName }}-securityrgroup-cilium-hubble
+      - name: {{ .Values.global.clusterName }}-securityrgroup-cilium-hubble
+        flow: Inbound
+        fromPortRange: 4244
         toPortRange: 4244
+        ipProtocol: tcp
+        ipRange: 10.0.0.0/16
       tag: OscK8sMainSG
     subnets:
     - ipSubnetRange: 10.0.4.0/24
