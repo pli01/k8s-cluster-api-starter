@@ -23,6 +23,9 @@ data:
     kind: StorageClass
     metadata:
       name: {{ .metadata.name }}
+    {{- if hasKey .metadata "annotations" }}
+      annotations: {{ .metadata.annotations | toYaml | nindent 8 }}
+    {{- end }}
     {{- .spec | toYaml | nindent 4 }}
     {{- end }}
     {{- end }}

@@ -27,8 +27,10 @@ unnecessary_services:
   - apt-daily-upgrade.timer
   - apt-daily-upgrade.service
   - unattended-upgrades
+  - hv-kvp-daemon
 unnecessary_packages:
   - unattended-upgrades
+  - snapd
 
 apt_extra_repo_dir: /tmp
 

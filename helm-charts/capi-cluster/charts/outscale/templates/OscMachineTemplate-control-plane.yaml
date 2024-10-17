@@ -18,6 +18,7 @@ spec:
           loadBalancerName: {{ .Values.loadbalancername | default "{{ .Values.global.clusterName }}-k8s" }}
           role: controlplane
           vmType: {{ .Values.controlplane.vmType }}
+          subregionName: {{ .Values.controlplane.subregionName  }}
           {{- if hasKey .Values.controlplane "rootDisk" }}
           rootDisk:
             rootDiskIops: {{ .Values.controlplane.rootDisk.rootDiskIops | default 100 }}
