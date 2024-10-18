@@ -14,12 +14,12 @@ spec:
     loadBalancer:
       clusterName: {{ .Values.global.clusterName }}
       healthCheck:
-        checkinterval: 5
-        healthythreshold: 5
+        checkinterval: 30
+        healthythreshold: 10
         port: 6443
         protocol: TCP
-        timeout: 5
-        unhealthythreshold: 2
+        timeout: 20
+        unhealthythreshold: 8
       listener:
         backendport: 6443
         backendprotocol: TCP
