@@ -122,6 +122,18 @@ spec:
     - description: Security Group Node with {{ .Values.global.clusterName }}
       name: {{ .Values.global.clusterName }}-securitygroup-node
       securityGroupRules:
+      - name: {{ .Values.global.clusterName }}-securitygroup-all-udp
+        flow: Inbound
+        fromPortRange: 1
+        toPortRange: 65535
+        ipProtocol: udp
+        ipRange: 10.0.0.0/16
+      - name: {{ .Values.global.clusterName }}-securitygroup-all-tcp
+        flow: Inbound
+        fromPortRange: 1
+        toPortRange: 65535
+        ipProtocol: tcp
+        ipRange: 10.0.0.0/16
       - name: {{ .Values.global.clusterName }}-securitygroup-calico-vxlan
         flow: Inbound
         fromPortRange: 4789
