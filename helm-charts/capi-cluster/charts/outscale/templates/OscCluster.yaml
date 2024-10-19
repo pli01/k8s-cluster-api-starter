@@ -94,7 +94,7 @@ spec:
         ipRange: 10.0.3.0/24
       - name: {{ .Values.global.clusterName }}-securitygrouprule-etcd
         flow: Inbound
-        fromPortRange: 2379
+        fromPortRange: 2378
         toPortRange: 2380
         ipProtocol: tcp
         ipRange: 10.0.4.0/24
@@ -113,6 +113,12 @@ spec:
     - description: Security Group Lb with {{ .Values.global.clusterName }}
       name: {{ .Values.global.clusterName }}-securitygroup-lb
       securityGroupRules:
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-lb-out
+        flow: Outbound
+        fromPortRange: 6443
+        toPortRange: 6443
+        ipProtocol: tcp
+        ipRange: 10.0.3.0/24
       - name: {{ .Values.global.clusterName }}-securitygrouprule-lb
         flow: Inbound
         fromPortRange: 6443
@@ -122,17 +128,11 @@ spec:
     - description: Security Group Node with {{ .Values.global.clusterName }}
       name: {{ .Values.global.clusterName }}-securitygroup-node
       securityGroupRules:
-      - name: {{ .Values.global.clusterName }}-securitygroup-all-udp
-        flow: Inbound
-        fromPortRange: 1
-        toPortRange: 65535
-        ipProtocol: udp
-        ipRange: 10.0.0.0/16
       - name: {{ .Values.global.clusterName }}-securitygroup-all-tcp
         flow: Inbound
         fromPortRange: 1
         toPortRange: 65535
-        ipProtocol: tcp
+        ipProtocol: "-1"
         ipRange: 10.0.0.0/16
       - name: {{ .Values.global.clusterName }}-securitygroup-calico-vxlan
         flow: Inbound
