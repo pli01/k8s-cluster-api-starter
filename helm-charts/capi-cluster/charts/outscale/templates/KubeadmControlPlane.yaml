@@ -55,7 +55,7 @@ spec:
           sync
           systemctl restart kubelet
         owner: root:root
-        path: /etc/post-kubeadm-commands/10-tweak-kubeapi-memlimit.sh
+        path: /etc/post-kubeadm-commands/10-tweak-kubeapi-memlimit.sh.disable
         permissions: "0700"
       - path: /etc/apt/apt.conf.d/99proxy
         owner: "root:root"
@@ -153,6 +153,7 @@ spec:
     joinConfiguration:
       nodeRegistration:
         imagePullPolicy: IfNotPresent
+        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
         kubeletExtraArgs:
           cloud-provider: external
           provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
