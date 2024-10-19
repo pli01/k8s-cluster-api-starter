@@ -146,17 +146,16 @@ spec:
       {{ end -}}
       nodeRegistration:
         imagePullPolicy: IfNotPresent
+        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
         kubeletExtraArgs:
           cloud-provider: external
           provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
-        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
     joinConfiguration:
       nodeRegistration:
         imagePullPolicy: IfNotPresent
         kubeletExtraArgs:
           cloud-provider: external
           provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
-        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
     verbosity: 10
   machineTemplate:
     infrastructureRef:
