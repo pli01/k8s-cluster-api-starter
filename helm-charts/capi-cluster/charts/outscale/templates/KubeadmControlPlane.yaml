@@ -85,11 +85,11 @@ spec:
           {{- end }}
       - content: |
           #!/bin/sh
-          curl https://github.com/opencontainers/runc/releases/download/v1.1.1/runc.amd64 -Lo /tmp/runc.amd64
+          curl https://github.com/opencontainers/runc/releases/download/v1.1.15/runc.amd64 -Lo /tmp/runc.amd64
           chmod +x /tmp/runc.amd64
           cp -f /tmp/runc.amd64 /usr/local/sbin/runc
         owner: root:root
-        path: /etc/pre-kubeadm-commands/10-set_runc.sh
+        path: /etc/pre-kubeadm-commands/01-set_runc.sh
         permissions: "0744"
       - content: |
           #!/bin/bash
