@@ -119,6 +119,7 @@ spec:
           # wait external access is up
           external_url="github.com"
           [[ -n "$external_url" ]] && wait_and_retry 360 10 "host $external_url"
+          sleep 3600
         owner: root:root
         path: /etc/pre-kubeadm-commands/00-wait_endpoint.sh
         permissions: "0755"
