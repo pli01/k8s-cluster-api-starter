@@ -1,5 +1,30 @@
 #!/bin/bash
 #
+# install prereq binaries and an empty kind cluster
+# This cluster must be configured to bootstrap other clusters
+#
+# initArch discovers the architecture for this system.
+initArch() {
+  ARCH=$(uname -m)
+  case $ARCH in
+    armv5*) ARCH="armv5";;
+    armv6*) ARCH="armv6";;
+    armv7*) ARCH="arm";;
+    aarch64) ARCH="arm64";;
+    x86_64) ARCH="amd64";;
+    x86|i686|i386) ARCH="386";;
+  esac
+}
+
+# initOS discovers the operating system for this system.
+initOS() {
+  OS=$(uname|tr '[:upper:]' '[:lower:]')
+}
+
+# detect OS ARCH
+initArch
+initOS
+
 # source VERSION
 export KIND_VERSION="${KIND_VERSION:-v0.24.0}"
 export KUBECTL_VERSION="${KUBECTL_VERSION:-v1.29.8}"
@@ -17,16 +42,16 @@ export YQ_VERSION=${YQ_VERSION:-v4.44.3}
 curl -L https://raw.githubusercontent.com/numerique-gouv/dk8s/main/scripts/install-prereq.sh | bash
 
 # install clusterctl
-curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/${CLUSTERCTL_VERSION}/clusterctl-linux-amd64 -o clusterctl
+curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/${CLUSTERCTL_VERSION}/clusterctl-${OS}-${ARCH} -o clusterctl
 chmod +x clusterctl
 sudo mv clusterctl /usr/local/bin/clusterctl
 
 # install yq
-curl -LO https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64.tar.gz
-tar -zxvf yq_linux_amd64.tar.gz  ./yq_linux_amd64
-rm -rf yq_linux_amd64.tar.gz
-chmod +x yq_linux_amd64
-sudo mv yq_linux_amd64 /usr/local/bin/yq
+curl -LO https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_${OS}_${ARCH}.tar.gz
+tar -zxvf yq_${OS}_${ARCH}.tar.gz  ./yq_${OS}_${ARCH}
+rm -rf yq_${OS}_${ARCH}.tar.gz
+chmod +x yq_${OS}_${ARCH}
+sudo mv yq_${OS}_${ARCH} /usr/local/bin/yq
 
 # create cluster
 kind create cluster --name mgmt --image kindest/node:${KUBERNETES_VERSION} --config - <<EOF
