@@ -9,8 +9,31 @@ spec:
     bastion:
       enable: {{ .Values.bastion.enable | default "false" }}
       clusterName: {{ .Values.global.clusterName }}
+    {{- if .Values.bastion.enable }}
+      name: {{ .Values.global.clusterName }}-vm-bastion
+      keypairName: {{ .Values.sshkeyname }}
+      vmType: {{ .Values.bastion.vmType }}
+      imageName: {{ .Values.bastion.image }}
+      deviceName: "/dev/sda1"
+      {{ if hasKey .Values.bastion "rootDisk" -}}
+      rootDisk:
+        rootDiskIops: {{ .Values.bastion.rootDisk.rootDiskIops | default 100 }}
+        rootDiskSize: {{ .Values.bastion.rootDisk.rootDiskSize | default 30 }}
+        rootDiskType: {{ .Values.bastion.rootDisk.rootDiskType | default "standard" }}
+      {{ end -}}
+      subnetName: {{ .Values.global.clusterName }}-subnet-public
+      subregionName: {{ .Values.bastion.subregionName  }}
+      securityGroupNames:
+        - name: {{ .Values.global.clusterName }}-securitygroup-bastion
+      publicIpName: {{ .Values.global.clusterName }}-publicip-bastion
+    {{- end }}
     internetService:
       clusterName: {{ .Values.global.clusterName }}
+    publicIps:
+      {{ if .Values.bastion.enable -}}
+      - name: {{ .Values.global.clusterName }}-publicip-bastion
+      {{ end -}}
+      - name: {{ .Values.global.clusterName }}-publicip-nat
     loadBalancer:
       clusterName: {{ .Values.global.clusterName }}
       healthCheck:
@@ -32,6 +55,21 @@ spec:
     net:
       clusterName: {{ .Values.global.clusterName }}
     securityGroups:
+    {{- if .Values.bastion.enable }}
+    - description: Security Group bastion with {{ .Values.global.clusterName }}
+      name: {{ .Values.global.clusterName }}-securitygroup-bastion
+      {{- if hasKey .Values.bastion "allow_cidr" }}
+      securityGroupRules:
+      {{- range $i, $cidr := .Values.bastion.allow_cidr }}
+      - name: {{ $.Values.global.clusterName }}-securitygrouprule-ssh-{{ $i }}
+        flow: Inbound
+        fromPortRange: 22
+        toPortRange: 22
+        ipProtocol: tcp
+        ipRange: {{ $cidr }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
     - description: Security Group Kw with {{ .Values.global.clusterName }}
       name: {{ .Values.global.clusterName }}-securitygroup-kw
       securityGroupRules:
@@ -118,7 +156,7 @@ spec:
         fromPortRange: 6443
         toPortRange: 6443
         ipProtocol: tcp
-        ipRange: 10.0.3.0/24
+        ipRange: 10.0.4.0/24
       - name: {{ .Values.global.clusterName }}-securitygrouprule-lb
         flow: Inbound
         fromPortRange: 6443
@@ -196,6 +234,14 @@ spec:
         toPortRange: 4244
         ipProtocol: tcp
         ipRange: 10.0.0.0/16
+      {{ if .Values.bastion.enable -}}
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-ssh
+        flow: Inbound
+        fromPortRange: 22
+        toPortRange: 22
+        ipProtocol: tcp
+        ipRange: 10.0.2.0/24
+      {{ end -}}
       tag: OscK8sMainSG
     subnets:
     - ipSubnetRange: 10.0.4.0/24

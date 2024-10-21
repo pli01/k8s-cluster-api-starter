@@ -43,7 +43,7 @@ spec:
           systemctl daemon-reload
           systemctl restart containerd
         owner: root:root
-        path: /etc/pre-kubeadm-commands/10-containerd-restart.sh
+        path: /etc/pre-kubeadm-commands/10-containerd-restart.sh.disable
         permissions: "0700"
       - content: |
           #!/bin/bash
@@ -55,7 +55,7 @@ spec:
           sync
           systemctl restart kubelet
         owner: root:root
-        path: /etc/post-kubeadm-commands/10-tweak-kubeapi-memlimit.sh
+        path: /etc/post-kubeadm-commands/10-tweak-kubeapi-memlimit.sh.disable
         permissions: "0700"
       - path: /etc/apt/apt.conf.d/99proxy
         owner: "root:root"
@@ -121,12 +121,12 @@ spec:
       controllerManager:
         extraArgs:
           cloud-provider: external
-      etcd:
-        local:
-          extraArgs:
-            election-timeout: "5000" ## debug
-            heartbeat-interval: "500"
-            snapshot-count: "5000"
+#      etcd:
+#        local:
+#          extraArgs:
+#            election-timeout: "5000" ## debug
+#            heartbeat-interval: "500"
+#            snapshot-count: "5000"
 ### use external etcd volume dir
 #           quota-backend-bytes: "8589934592"
 #          dataDir: /var/lib/etcddisk/etcd ## We Change the etcd data dir when moving to dedicated volume (because of "dir is not empty")
