@@ -43,7 +43,7 @@ spec:
           systemctl daemon-reload
           systemctl restart containerd
         owner: root:root
-        path: /etc/pre-kubeadm-commands/10-containerd-restart.sh
+        path: /etc/pre-kubeadm-commands/10-containerd-restart.sh.disable
         permissions: "0700"
       - content: |
           #!/bin/bash
@@ -55,7 +55,7 @@ spec:
           sync
           systemctl restart kubelet
         owner: root:root
-        path: /etc/post-kubeadm-commands/10-tweak-kubeapi-memlimit.sh
+        path: /etc/post-kubeadm-commands/10-tweak-kubeapi-memlimit.sh.disable
         permissions: "0700"
       - path: /etc/apt/apt.conf.d/99proxy
         owner: "root:root"
@@ -84,14 +84,6 @@ spec:
           Environment="NO_PROXY=.svc,.svc.cluster,.svc.cluster.local,127.0.0.0/8,192.168.0.0/16,{{ .Values.global.pods.cidrBlocks }},{{ .Values.global.services.cidrBlocks }}"
           {{- end }}
       - content: |
-          #!/bin/sh
-          curl https://github.com/opencontainers/runc/releases/download/v1.1.1/runc.amd64 -Lo /tmp/runc.amd64
-          chmod +x /tmp/runc.amd64
-          cp -f /tmp/runc.amd64 /usr/local/sbin/runc
-        owner: root:root
-        path: /etc/pre-kubeadm-commands/10-set_runc.sh
-        permissions: "0744"
-      - content: |
           #!/bin/bash
           set +e
           # Define the retry function
@@ -104,7 +96,7 @@ spec:
             local exit_code=$?
 
             if [[ $exit_code -ne 0 && $retries -gt 0 ]]; then
-              echo "# Wait $wait before retrying $retries"
+              echo "# Wait $wait before retrying $retries : $command"
               sleep $wait
               wait_and_retry $(($retries - 1)) $wait "$command"
             else
@@ -129,12 +121,15 @@ spec:
       controllerManager:
         extraArgs:
           cloud-provider: external
-### use external etcd volume dir
 #      etcd:
 #        local:
-#          dataDir: /var/lib/etcddisk/etcd ## We Change the etcd data dir when moving to dedicated volume (because of "dir is not empty")
 #          extraArgs:
-#            quota-backend-bytes: "8589934592"
+#            election-timeout: "5000" ## debug
+#            heartbeat-interval: "500"
+#            snapshot-count: "5000"
+### use external etcd volume dir
+#           quota-backend-bytes: "8589934592"
+#          dataDir: /var/lib/etcddisk/etcd ## We Change the etcd data dir when moving to dedicated volume (because of "dir is not empty")
     initConfiguration:
       {{ if and .Values.global.addons.cni.enabled ( eq .Values.global.addons.cni.type "cilium" ) -}}
       # cilium replace kube-proxy
@@ -143,17 +138,17 @@ spec:
       {{ end -}}
       nodeRegistration:
         imagePullPolicy: IfNotPresent
+        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
         kubeletExtraArgs:
           cloud-provider: external
           provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
-        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
     joinConfiguration:
       nodeRegistration:
         imagePullPolicy: IfNotPresent
+        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
         kubeletExtraArgs:
           cloud-provider: external
           provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
-        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
     verbosity: 10
   machineTemplate:
     infrastructureRef:
