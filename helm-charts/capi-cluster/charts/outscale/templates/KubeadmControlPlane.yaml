@@ -35,6 +35,14 @@ spec:
     files:
       - content: |
           #!/bin/bash
+          set -e
+          echo "### break"
+          sleep 36000
+        owner: root:root
+        path: /etc/pre-kubeadm-commands/01-debug.sh
+        permissions: "0700"
+      - content: |
+          #!/bin/bash
           #
           # pre-kubadm-scripts
           #
@@ -43,11 +51,6 @@ spec:
           echo "## restart containerd"
           systemctl daemon-reload
           systemctl restart containerd
-          sleep 30
-          echo "## restart kubelet"
-          systemctl restart kubelet
-          crictl ps -a
-          sleep 3600
         owner: root:root
         path: /etc/pre-kubeadm-commands/10-containerd-restart.sh.disable
         permissions: "0700"
