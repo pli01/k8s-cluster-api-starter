@@ -125,8 +125,9 @@ spec:
         permissions: "0755"
     clusterConfiguration:
       apiServer:
-        extraArgs:
-          cloud-provider: external
+#        extraArgs:
+#          cloud-provider: external
+        timeoutForControlPlane: 20m
       controllerManager:
         extraArgs:
           cloud-provider: external
