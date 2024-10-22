@@ -50,18 +50,18 @@ repo: helm repo index (make index to generate , don t forget to commit index and
 ## Use it
 
 ```
-# create config for your cluster for example: environments/c1-dev.yaml
+# create config for your cluster for example: samples/c1-dev.yaml
 # Adapt and modify to your needs (image, network, replica, credentials...)
 
 export CLUSTER_NAME=c1-dev
-cat environments/c1-demo.yaml.sample > environments/${CLUSTER_NAME}.yaml
-cat environments/cluster-addons.yaml.sample > environments/cluster-addons.yaml
+cat samples/c1-demo.yaml.sample > samples/${CLUSTER_NAME}.yaml
+cat samples/cluster-addons.yaml.sample > samples/cluster-addons.yaml
 
 # install helm addons
-helm upgrade --install -f environments/cluster-addons.yaml helm-addons ./capi-cluster-addons  --wait
+helm upgrade --install -f samples/cluster-addons.yaml helm-addons ./capi-cluster-addons  --wait
 
 # install workload cluster
-helm upgrade --install -f environments/${CLUSTER_NAME}.yaml ${CLUSTER_NAME} ./capi-cluster  --wait
+helm upgrade --install -f samples/${CLUSTER_NAME}.yaml ${CLUSTER_NAME} ./capi-cluster  --wait
 
 ## Cluster is creating, check events !!
 
