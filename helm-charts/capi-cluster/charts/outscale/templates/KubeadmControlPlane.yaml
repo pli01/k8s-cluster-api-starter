@@ -40,8 +40,14 @@ spec:
           #
           set -e
           # apply containerd config before kubeadm
+          echo "## restart containerd"
           systemctl daemon-reload
           systemctl restart containerd
+          sleep 30
+          echo "## restart kubelet"
+          systemctl restart kubelet
+          crictl ps -a
+          sleep 3600
         owner: root:root
         path: /etc/pre-kubeadm-commands/10-containerd-restart.sh.disable
         permissions: "0700"
