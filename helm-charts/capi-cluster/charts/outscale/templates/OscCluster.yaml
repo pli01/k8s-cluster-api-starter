@@ -30,10 +30,10 @@ spec:
     internetService:
       clusterName: {{ .Values.global.clusterName }}
     publicIps:
-      {{ if .Values.bastion.enable -}}
-      - name: {{ .Values.global.clusterName }}-publicip-bastion
-      {{ end -}}
       - name: {{ .Values.global.clusterName }}-publicip-nat
+    {{- if .Values.bastion.enable }}
+      - name: {{ .Values.global.clusterName }}-publicip-bastion
+    {{- end }}
     loadBalancer:
       clusterName: {{ .Values.global.clusterName }}
       healthCheck:
