@@ -39,11 +39,11 @@ spec:
       clusterName: {{ .Values.global.clusterName }}
       healthCheck:
         checkinterval: 30
-        healthythreshold: 10
+        healthythreshold: 5
         port: 6443
         protocol: TCP
-        timeout: 20
-        unhealthythreshold: 8
+        timeout: 30
+        unhealthythreshold: 5
       listener:
         backendport: 6443
         backendprotocol: TCP
