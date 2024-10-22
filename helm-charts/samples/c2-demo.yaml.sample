@@ -51,7 +51,7 @@ outscale:
   # override lb name
   loadbalancername: c2-demo-k8s
   bastion:
-    enable: true
+    enable: false
     image: ubuntu-2204-2204-kubernetes-v1.30.5-2024-10-21
     vmType: tinav5.c4r8p2
     subregionName: eu-west-2a
