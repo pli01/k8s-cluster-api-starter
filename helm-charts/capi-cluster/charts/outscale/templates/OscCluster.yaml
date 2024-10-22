@@ -25,7 +25,8 @@ spec:
       subregionName: {{ .Values.bastion.subregionName  }}
       securityGroupNames:
         - name: {{ .Values.global.clusterName }}-securitygroup-bastion
-      publicIpName: {{ .Values.global.clusterName }}-publicip-bastion
+      #publicIpName: {{ .Values.global.clusterName }}-publicip-bastion
+      publicIpNameAfterBastion: true
     {{- end }}
     internetService:
       clusterName: {{ .Values.global.clusterName }}
