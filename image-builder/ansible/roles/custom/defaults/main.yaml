@@ -28,6 +28,7 @@ unnecessary_services:
   - apt-daily-upgrade.service
   - unattended-upgrades
   - hv-kvp-daemon
+  - update-notifier-download.timer
 unnecessary_packages:
   - unattended-upgrades
   - snapd
