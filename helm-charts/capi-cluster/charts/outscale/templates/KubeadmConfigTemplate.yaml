@@ -53,7 +53,7 @@ spec:
         nodeRegistration:
           imagePullPolicy: IfNotPresent
           #name: {{`'{{ ds.meta_data.local_hostname }}'`}}
-          name: '{{ ds.meta_data.local_hostname.split(".")[0] }}'
+          name: {{`'{{ ds.meta_data.local_hostname.split(".")[0] }}'`}}
           kubeletExtraArgs:
             cloud-provider: external
             provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
