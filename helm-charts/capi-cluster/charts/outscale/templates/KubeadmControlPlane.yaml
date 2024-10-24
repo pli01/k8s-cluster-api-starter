@@ -24,9 +24,9 @@ spec:
 #           quota-backend-bytes: "8589934592"
 #          dataDir: /var/lib/etcddisk/etcd ## We Change the etcd data dir when moving to dedicated volume (because of "dir is not empty")
     initConfiguration:
-      localAPIEndpoint:
-        advertiseAddress: {{`'{{ ds.meta_data.local_ipv4 }}'`}}
-        bindPort: 6443
+#      localAPIEndpoint:
+#        advertiseAddress: {{`'{{ ds.meta_data.local_ipv4 }}'`}}
+#        bindPort: 6443
       {{ if and .Values.global.addons.cni.enabled ( eq .Values.global.addons.cni.type "cilium" ) -}}
       # cilium replace kube-proxy
       skipPhases:
