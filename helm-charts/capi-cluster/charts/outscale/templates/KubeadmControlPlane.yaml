@@ -78,7 +78,7 @@ spec:
           #!/bin/bash
           set -e
           echo "### break"
-          sleep 30
+          sleep 3600
         owner: root:root
         path: /etc/pre-kubeadm-commands/01-debug.sh
         permissions: "0700"
