@@ -8,16 +8,16 @@ spec:
     verbosity: 10
     clusterConfiguration:
       apiServer:
-        extraArgs:
-          cloud-provider: external
         timeoutForControlPlane: 20m
-      controllerManager:
-        extraArgs:
-          cloud-provider: external
-      etcd:
-        local:
-          extraArgs:
-            listen-client-urls: {{`'https://{{ ds.meta_data.local_ipv4 }}:2379'`}}
+#        extraArgs:
+#          cloud-provider: external
+#      controllerManager:
+#        extraArgs:
+#          cloud-provider: external
+#      etcd:
+#        local:
+#          extraArgs:
+#            listen-client-urls: {{`'https://{{ ds.meta_data.local_ipv4 }}:2379'`}}
 #            election-timeout: "5000" ## debug
 #            heartbeat-interval: "500"
 #            snapshot-count: "5000"
@@ -25,23 +25,21 @@ spec:
 #           quota-backend-bytes: "8589934592"
 #          dataDir: /var/lib/etcddisk/etcd ## We Change the etcd data dir when moving to dedicated volume (because of "dir is not empty")
     initConfiguration:
-      localAPIEndpoint:
-        advertiseAddress: {{`'{{ ds.meta_data.local_ipv4 }}'`}}
-        bindPort: 6443
+#      localAPIEndpoint:
+#        advertiseAddress: {{`'{{ ds.meta_data.local_ipv4 }}'`}}
+#        bindPort: 6443
       {{ if and .Values.global.addons.cni.enabled ( eq .Values.global.addons.cni.type "cilium" ) -}}
       # cilium replace kube-proxy
       skipPhases:
         - addon/kube-proxy
       {{ end -}}
       nodeRegistration:
-        imagePullPolicy: IfNotPresent
         name: {{`'{{ ds.meta_data.local_hostname }}'`}}
         kubeletExtraArgs:
           cloud-provider: external
           provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
     joinConfiguration:
       nodeRegistration:
-        imagePullPolicy: IfNotPresent
         name: {{`'{{ ds.meta_data.local_hostname }}'`}}
         kubeletExtraArgs:
           cloud-provider: external
@@ -81,7 +79,7 @@ spec:
           echo "### break"
           sleep 3600
         owner: root:root
-        path: /etc/pre-kubeadm-commands/01-debug.sh
+        path: /etc/pre-kubeadm-commands/01-debug.sh.disable
         permissions: "0700"
       - content: |
           #!/bin/bash
