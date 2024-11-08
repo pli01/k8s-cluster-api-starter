@@ -5,6 +5,8 @@ metadata:
   name: {{ .Values.global.clusterName }}
   labels:
     cluster.x-k8s.io/name: {{ .Values.global.clusterName }}
+    ccm: {{ .Values.global.clusterName }}-crs-ccm
+    cni: {{ .Values.global.clusterName }}-crs-cni
     {{ if .Values.global.addons.cni.enabled -}}
     cni.enabled: {{ printf "%t" .Values.global.addons.cni.enabled | quote }}
     cni.type: {{ .Values.global.addons.cni.type }}

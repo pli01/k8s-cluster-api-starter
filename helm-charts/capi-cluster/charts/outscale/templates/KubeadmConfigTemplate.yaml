@@ -7,13 +7,21 @@ metadata:
 spec:
   template:
     spec:
+      joinConfiguration:
+        nodeRegistration:
+          imagePullPolicy: IfNotPresent
+          name: {{`'{{ ds.meta_data.local_hostname }}'`}}
+          kubeletExtraArgs:
+            cloud-provider: external
+            provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
+            {{- with $pool.nodeLabels }}
+            node-labels: "{{ range $i, $k := (keys . | sortAlpha) }}{{ if ne $i 0 }},{{ end }}{{ $k }}={{ index $pool.nodeLabels $k }}{{ end }}"
+            {{- end }}
       preKubeadmCommands:
-        - echo debug-pre > /tmp/out
         - mkdir -p /etc/pre-kubeadm-commands
         - for script in $(find /etc/pre-kubeadm-commands/ -name '*.sh' -type f | sort);
           do echo "Running script $script"; "$script"; done
       postKubeadmCommands:
-        - echo debug-post >> /tmp/out
         - mkdir -p /etc/post-kubeadm-commands
         - for script in $(find /etc/post-kubeadm-commands/ -name '*.sh' -type f | sort);
           do echo "Running script $script"; "$script"; done
@@ -49,15 +57,5 @@ spec:
         owner: root:root
         path: /etc/pre-kubeadm-commands/00-wait_endpoint.sh
         permissions: "0755"
-      joinConfiguration:
-        nodeRegistration:
-          imagePullPolicy: IfNotPresent
-          name: {{`'{{ ds.meta_data.local_hostname }}'`}}
-          kubeletExtraArgs:
-            cloud-provider: external
-            provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
-            {{- with $pool.nodeLabels }}
-            node-labels: "{{ range $i, $k := (keys . | sortAlpha) }}{{ if ne $i 0 }},{{ end }}{{ $k }}={{ index $pool.nodeLabels $k }}{{ end }}"
-            {{- end }}
 ---
 {{- end }}

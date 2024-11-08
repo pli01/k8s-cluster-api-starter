@@ -5,6 +5,46 @@ metadata:
   name: {{ .Values.global.clusterName }}-control-plane
 spec:
   kubeadmConfigSpec:
+    verbosity: 5
+    clusterConfiguration:
+      apiServer:
+        timeoutForControlPlane: 20m
+        extraArgs:
+          cloud-provider: external
+      controllerManager:
+        extraArgs:
+          cloud-provider: external
+#      etcd:
+#        local:
+#          extraArgs:
+#            listen-client-urls: {{`'https://{{ ds.meta_data.local_ipv4 }}:2379'`}}
+#            election-timeout: "5000" ## debug
+#            heartbeat-interval: "500"
+#            snapshot-count: "5000"
+### use external etcd volume dir
+#           quota-backend-bytes: "8589934592"
+#          dataDir: /var/lib/etcddisk/etcd ## We Change the etcd data dir when moving to dedicated volume (because of "dir is not empty")
+    initConfiguration:
+#      localAPIEndpoint:
+#        advertiseAddress: {{`'{{ ds.meta_data.local_ipv4 }}'`}}
+#        bindPort: 6443
+      {{ if and .Values.global.addons.cni.enabled ( eq .Values.global.addons.cni.type "cilium" ) -}}
+      # cilium replace kube-proxy
+      skipPhases:
+        - addon/kube-proxy
+      {{ end -}}
+      nodeRegistration:
+        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
+        kubeletExtraArgs:
+          cloud-provider: external
+          provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
+    joinConfiguration:
+      nodeRegistration:
+        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
+        kubeletExtraArgs:
+          cloud-provider: external
+          provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
+# cloud-init
 ##  Add external volume for etcd
 #    diskSetup:
 ##      partitions:
@@ -23,12 +63,10 @@ spec:
 #      - - LABEL=etcd_disk
 #        - /var/lib/etcddisk
     preKubeadmCommands:
-      - echo debug-pre > /tmp/out
       - mkdir -p /etc/pre-kubeadm-commands
       - for script in $(find /etc/pre-kubeadm-commands/ -name '*.sh' -type f | sort);
         do echo "Running script $script"; "$script"; done
     postKubeadmCommands:
-      - echo debug-post >> /tmp/out
       - mkdir -p /etc/post-kubeadm-commands
       - for script in $(find /etc/post-kubeadm-commands/ -name '*.sh' -type f | sort);
         do echo "Running script $script"; "$script"; done
@@ -40,6 +78,7 @@ spec:
           #
           set -e
           # apply containerd config before kubeadm
+          echo "## restart containerd"
           systemctl daemon-reload
           systemctl restart containerd
         owner: root:root
@@ -114,42 +153,6 @@ spec:
         owner: root:root
         path: /etc/pre-kubeadm-commands/00-wait_endpoint.sh
         permissions: "0755"
-    clusterConfiguration:
-      apiServer:
-        extraArgs:
-          cloud-provider: external
-      controllerManager:
-        extraArgs:
-          cloud-provider: external
-#      etcd:
-#        local:
-#          extraArgs:
-#            election-timeout: "5000" ## debug
-#            heartbeat-interval: "500"
-#            snapshot-count: "5000"
-### use external etcd volume dir
-#           quota-backend-bytes: "8589934592"
-#          dataDir: /var/lib/etcddisk/etcd ## We Change the etcd data dir when moving to dedicated volume (because of "dir is not empty")
-    initConfiguration:
-      {{ if and .Values.global.addons.cni.enabled ( eq .Values.global.addons.cni.type "cilium" ) -}}
-      # cilium replace kube-proxy
-      skipPhases:
-        - addon/kube-proxy
-      {{ end -}}
-      nodeRegistration:
-        imagePullPolicy: IfNotPresent
-        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
-        kubeletExtraArgs:
-          cloud-provider: external
-          provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
-    joinConfiguration:
-      nodeRegistration:
-        imagePullPolicy: IfNotPresent
-        name: {{`'{{ ds.meta_data.local_hostname }}'`}}
-        kubeletExtraArgs:
-          cloud-provider: external
-          provider-id: {{`'aws:///{{ ds.meta_data.placement.availability_zone }}/{{ ds.meta_data.instance_id }}'`}}
-    verbosity: 10
   machineTemplate:
     infrastructureRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta1

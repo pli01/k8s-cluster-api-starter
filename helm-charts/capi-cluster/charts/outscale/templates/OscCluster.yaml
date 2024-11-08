@@ -25,24 +25,25 @@ spec:
       subregionName: {{ .Values.bastion.subregionName  }}
       securityGroupNames:
         - name: {{ .Values.global.clusterName }}-securitygroup-bastion
-      publicIpName: {{ .Values.global.clusterName }}-publicip-bastion
+      #publicIpName: {{ .Values.global.clusterName }}-publicip-bastion
+      publicIpNameAfterBastion: true
     {{- end }}
     internetService:
       clusterName: {{ .Values.global.clusterName }}
     publicIps:
-      {{ if .Values.bastion.enable -}}
-      - name: {{ .Values.global.clusterName }}-publicip-bastion
-      {{ end -}}
       - name: {{ .Values.global.clusterName }}-publicip-nat
+    {{- if .Values.bastion.enable }}
+      - name: {{ .Values.global.clusterName }}-publicip-bastion
+    {{- end }}
     loadBalancer:
       clusterName: {{ .Values.global.clusterName }}
       healthCheck:
         checkinterval: 30
-        healthythreshold: 10
+        healthythreshold: 5
         port: 6443
         protocol: TCP
-        timeout: 20
-        unhealthythreshold: 8
+        timeout: 30
+        unhealthythreshold: 5
       listener:
         backendport: 6443
         backendprotocol: TCP
@@ -112,6 +113,12 @@ spec:
         toPortRange: 179
         ipProtocol: tcp
         ipRange: 10.0.0.0/16
+      - name: {{ .Values.global.clusterName }}-securitygrouprule-api-lb
+        flow: Inbound
+        fromPortRange: 6443
+        toPortRange: 6443
+        ipProtocol: tcp
+        ipRange: 10.0.2.0/24
       - name: {{ .Values.global.clusterName }}-securitygrouprule-api-kw
         flow: Inbound
         fromPortRange: 6443
